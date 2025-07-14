@@ -43,14 +43,44 @@ Edit the `.env` file and fill in the necessary values.
 
 ## Using Docker Compose
 
-If you prefer to run the application using Docker, follow these steps:
+First, create a file named `.env`. This file must contain 4 secrets:
 
-1. Make sure you have Docker and Docker Compose installed on your system.
-2. A sample `compose.yml` file is provided in the project. Review and modify it if necessary to suit your needs.
-3. Build and run the Docker container:
-   docker compose up --build
+- **PAGE_SIZE** - Number of items to show per page
+- **DATABASE_URL** - Path to SQLite database file
+- **AUTH_PASSWORD** - Password to login to the application
+- **SESSION_SECRET** - Key used to create cookies
 
-4. Access the application at `http://localhost:3000`
+Here is an example:
 
-To stop the Docker container, use:
-docker compose down
+```
+PAGE_SIZE=15
+DATABASE_URL=file:/app/db/streamingtracker.db
+AUTH_PASSWORD=password
+SESSION_SECRET=abcdefghijk
+```
+
+In most cases you will only need to change **AUTH_PASSWORD** and **SESSION_SECRET**. Now, create your `compose.yml` file.
+
+```yaml
+services:
+  streamingtracker:
+    container_name: streamingtracker
+    image: adampresley/streaming-tracker:latest
+    env_file:
+      - ./.env
+    volumes:
+      - ./db:/app/db
+    ports:
+      - 127.0.0.1:3000:3000
+```
+
+This sample compose file forwards local port 3000 to the application. It also expects you to have a subdirectory named `db` where the database will be stored.
+
+Finally, run it.
+
+```bash
+docker compose up --build
+```
+
+Access the application at `http://localhost:3000`
+
