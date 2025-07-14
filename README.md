@@ -2,6 +2,19 @@
 
 Streaming Tracker is an application designed for my family to keep track of who is streaming what. It also allows me to keep a watchlist of upcoming shows and those recommended by friends. This application is written in Remix and uses SQLite.
 
+![Main screen](./screenshots/screenshot-1.png)
+
+![Manage Shows](./screenshots/screenshot-2.png)
+
+![Finished Shows](./screenshots/screenshot-3.png)
+
+![Manage Users](./screenshots/screenshot-4.png)
+
+![Manage Platforms](./screenshots/screenshot-5.png)
+
+![Add Show](./screenshots/screenshot-6.png)
+
+
 ## Getting Started
 
 ### Prerequisites
