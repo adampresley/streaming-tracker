@@ -38,6 +38,7 @@ RUN adduser --system --uid 1001 remix
 # Copy built application
 COPY --from=builder --chown=remix:nodejs /app/build ./build
 COPY --from=builder --chown=remix:nodejs /app/public ./public
+COPY --from=builder --chown=remix:nodejs /app/drizzle/migrations ./drizzle/migrations
 COPY --from=deps --chown=remix:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=remix:nodejs /app/package*.json ./
 
