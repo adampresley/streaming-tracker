@@ -9,7 +9,7 @@ import {
 } from "@remix-run/react";
 import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
 import { isAuthenticated } from "./auth.server";
-import { version } from "../../package.json";
+import { version } from "../package.json";
 
 import stylesheet from "./tailwind.css?url";
 
