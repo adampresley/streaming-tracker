@@ -9,6 +9,7 @@ import {
 } from "@remix-run/react";
 import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
 import { isAuthenticated } from "./auth.server";
+import { version } from "../../package.json";
 
 import stylesheet from "./tailwind.css?url";
 
@@ -18,7 +19,7 @@ export const links: LinksFunction = () => [
 
 export async function loader({ request }: LoaderFunctionArgs) {
    const isAuth = await isAuthenticated(request);
-   return { isAuthenticated: isAuth };
+   return { isAuthenticated: isAuth, appVersion: version };
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -40,8 +41,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-   const { isAuthenticated: isAuth } = useLoaderData<typeof loader>();
-   
+   const { isAuthenticated: isAuth, appVersion } = useLoaderData<typeof loader>();
+
    return (
       <>
          {isAuth && (
@@ -123,6 +124,9 @@ export default function App() {
          <main className={`container mx-auto p-4 ${isAuth ? "" : "min-h-screen"}`}>
             <Outlet />
          </main>
+         <footer className="bg-gray-800 p-4 text-center text-gray-400">
+            <p>Version: {appVersion}</p>
+         </footer>
       </>
    );
 }
