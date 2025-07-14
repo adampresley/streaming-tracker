@@ -1,0 +1,1 @@
+ALTER TABLE `shows_to_users` ADD `finished_at` integer;
