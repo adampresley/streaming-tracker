@@ -1,17 +1,10 @@
-import {
-   Links,
-   Meta,
-   Outlet,
-   Scripts,
-   ScrollRestoration,
-   NavLink,
-   useLoaderData,
-} from "@remix-run/react";
+import { useState } from "react";
+import { NavLink, Outlet, Scripts, ScrollRestoration, useLoaderData, Meta, Links } from "@remix-run/react";
 import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
 import { isAuthenticated } from "./auth.server";
 import { version } from "../package.json";
 
-import stylesheet from "./tailwind.css?url";
+import stylesheet from "./styles/app.css?url";
 
 export const links: LinksFunction = () => [
    { rel: "stylesheet", href: stylesheet },
@@ -24,14 +17,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export function Layout({ children }: { children: React.ReactNode }) {
    return (
-      <html lang="en" className="bg-gray-900 text-white">
+      <html lang="en">
          <head>
             <meta charSet="utf-8" />
             <meta name="viewport" content="width=device-width, initial-scale=1" />
             <Meta />
             <Links />
          </head>
-         <body className="font-sans">
+         <body>
             {children}
             <ScrollRestoration />
             <Scripts />
@@ -42,24 +35,28 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
    const { isAuthenticated: isAuth, appVersion } = useLoaderData<typeof loader>();
+   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
    return (
       <>
          {isAuth && (
-            <header className="bg-gray-800 p-4 shadow-md">
-               <div className="container mx-auto flex justify-between items-center">
-                  <h1 className="text-2xl font-bold text-teal-400">
+            <header>
+               <div className="container">
+                  <h1>
                      Streaming Tracker
                   </h1>
-                  <nav>
-                     <ul className="flex space-x-4">
+                  <button className="hamburger-menu" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                     &#9776;
+                  </button>
+                  <nav className={isMenuOpen ? "mobile-menu open" : "mobile-menu"}>
+                     <ul>
                         <li>
                            <NavLink
                               to="/"
                               className={({ isActive }) =>
-                                 `hover:text-teal-300 ${isActive ? "text-teal-400 font-bold" : ""
-                                 }`
+                                 isActive ? "active" : ""
                               }
+                              onClick={() => setIsMenuOpen(false)}
                            >
                               Dashboard
                            </NavLink>
@@ -68,9 +65,9 @@ export default function App() {
                            <NavLink
                               to="/shows/finished"
                               className={({ isActive }) =>
-                                 `hover:text-teal-300 ${isActive ? "text-teal-400 font-bold" : ""
-                                 }`
+                                 isActive ? "active" : ""
                               }
+                              onClick={() => setIsMenuOpen(false)}
                            >
                               Finished Shows
                            </NavLink>
@@ -79,9 +76,9 @@ export default function App() {
                            <NavLink
                               to="/admin/users"
                               className={({ isActive }) =>
-                                 `hover:text-teal-300 ${isActive ? "text-teal-400 font-bold" : ""
-                                 }`
+                                 isActive ? "active" : ""
                               }
+                              onClick={() => setIsMenuOpen(false)}
                            >
                               Users
                            </NavLink>
@@ -90,9 +87,9 @@ export default function App() {
                            <NavLink
                               to="/admin/platforms"
                               className={({ isActive }) =>
-                                 `hover:text-teal-300 ${isActive ? "text-teal-400 font-bold" : ""
-                                 }`
+                                 isActive ? "active" : ""
                               }
+                              onClick={() => setIsMenuOpen(false)}
                            >
                               Platforms
                            </NavLink>
@@ -101,9 +98,9 @@ export default function App() {
                            <NavLink
                               to="/shows/new"
                               className={({ isActive }) =>
-                                 `hover:text-teal-300 ${isActive ? "text-teal-400 font-bold" : ""
-                                 }`
+                                 isActive ? "active" : ""
                               }
+                              onClick={() => setIsMenuOpen(false)}
                            >
                               Add Show
                            </NavLink>
@@ -111,7 +108,8 @@ export default function App() {
                         <li>
                            <NavLink
                               to="/logout"
-                              className="hover:text-red-300 text-red-400"
+                              className="logout"
+                              onClick={() => setIsMenuOpen(false)}
                            >
                               Logout
                            </NavLink>
@@ -121,11 +119,15 @@ export default function App() {
                </div>
             </header>
          )}
-         <main className={`container mx-auto p-4 ${isAuth ? "" : "min-h-screen"}`}>
-            <Outlet />
+         <main className={isAuth ? "" : "logged-out"}>
+            <div className="container">
+               <Outlet />
+            </div>
          </main>
-         <footer className="bg-gray-800 p-4 text-center text-gray-400">
-            <p>Version: {appVersion}</p>
+         <footer>
+            <div className="container">
+               <p>Version: {appVersion}</p>
+            </div>
          </footer>
       </>
    );

@@ -34,18 +34,18 @@ export function ShowCard({
    }, []);
 
    return (
-      <div className="bg-gray-800 rounded-lg shadow-lg p-4 flex flex-col justify-between">
-         <div className="flex justify-between items-start">
+      <div className="show-card">
+         <div className="show-card-header">
             <div>
-               <h4 className="text-lg font-bold text-white">{show.name}</h4>
-               <p className="text-sm text-gray-400">{show.platformName}</p>
+               <h4>{show.name}</h4>
+               <p>{show.platformName}</p>
                {status === "IN_PROGRESS" && (
-                  <p className="text-sm text-gray-300 mt-2">
+                  <p>
                      Season {show.currentSeason} of {show.totalSeasons}
                   </p>
                )}
                {status === "WANT_TO_WATCH" && (
-                  <p className="text-sm text-gray-300 mt-2">
+                  <p>
                      {show.currentSeason > 1 
                         ? `${show.currentSeason - 1} of ${show.totalSeasons} seasons watched`
                         : `${show.totalSeasons} season${show.totalSeasons > 1 ? 's' : ''}`
@@ -54,24 +54,23 @@ export function ShowCard({
                )}
             </div>
             {status === "IN_PROGRESS" && (
-               <div className="relative" ref={dropdownRef}>
+               <div className="dropdown-container" ref={dropdownRef}>
                   <button
                      onClick={() => setShowDropdown(!showDropdown)}
-                     className="text-gray-400 hover:text-white p-1 rounded"
+                     className="dropdown-trigger"
                   >
                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
                      </svg>
                   </button>
                   {showDropdown && (
-                     <div className="absolute right-0 mt-2 w-48 bg-gray-700 rounded-md shadow-lg z-10">
+                     <div className="dropdown-menu">
                         <Form method="post">
                            <input type="hidden" name="showId" value={show.id} />
                            <button
                               type="submit"
                               name="_action"
                               value="setToWantToWatch"
-                              className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-600 hover:text-white"
                            >
                               Set to 'Want to Watch'
                            </button>
@@ -81,7 +80,7 @@ export function ShowCard({
                </div>
             )}
          </div>
-         <div className="mt-4 flex gap-2">
+         <div className="show-card-actions">
             {status === "IN_PROGRESS" ? (
                <Form method="post">
                   <input type="hidden" name="showId" value={show.id} />
@@ -91,7 +90,7 @@ export function ShowCard({
                      type="submit"
                      name="_action"
                      value="completeSeason"
-                     className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded text-sm"
+                     className="primary"
                   >
                      ✓ Finish Season {show.currentSeason}
                   </button>
@@ -103,7 +102,7 @@ export function ShowCard({
                      type="submit"
                      name="_action"
                      value="startWatching"
-                     className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded text-sm"
+                     className="secondary"
                   >
                      Start Watching
                   </button>

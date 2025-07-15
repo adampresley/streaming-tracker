@@ -60,12 +60,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
    return redirect("/admin/platforms");
 };
 
-function DeletePlatformButton({ platform, showCount, onDelete }: { platform: { id: number; name: string }, showCount: number, onDelete: () => void }) {
+function DeletePlatformButton({ platform, showCount, onDelete, variant = "link" }: { platform: { id: number; name: string }, showCount: number, onDelete: () => void, variant?: "link" | "button" }) {
    const [showConfirmation, setShowConfirmation] = useState(false);
 
    if (showCount > 0) {
       return (
-         <span className="text-gray-500 text-sm">
+         <span className="disabled-reason">
             Cannot delete (attached to {showCount} show{showCount !== 1 ? 's' : ''})
          </span>
       );
@@ -75,7 +75,7 @@ function DeletePlatformButton({ platform, showCount, onDelete }: { platform: { i
       <>
          <button
             onClick={() => setShowConfirmation(true)}
-            className="text-red-400 hover:text-red-200"
+            className={variant === "button" ? "button danger small" : "danger-link"}
          >
             Delete
          </button>
@@ -115,23 +115,22 @@ export default function AdminPlatforms() {
    };
 
    return (
-      <div className="space-y-6">
-         <h2 className="text-3xl font-bold text-teal-400">Manage Platforms</h2>
+      <div className="admin-page">
+         <h2>Manage Platforms</h2>
 
-         <div className="bg-gray-800 p-4 rounded-lg">
-            <h3 className="text-xl font-bold mb-2">Add New Platform</h3>
-            <Form method="post" className="flex gap-4" ref={formRef}>
+         <div className="card">
+            <h3>Add New Platform</h3>
+            <Form method="post" className="add-platform-form" ref={formRef}>
                <input
                   type="text"
                   name="platformName"
                   placeholder="Enter new platform name"
-                  className="flex-grow bg-gray-700 border-gray-600 rounded-md shadow-sm text-white p-2"
                />
                <button
                   type="submit"
                   name="_action"
                   value="createPlatform"
-                  className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded"
+                  className="primary"
                >
                   Add Platform
                </button>
@@ -143,42 +142,41 @@ export default function AdminPlatforms() {
             <input type="hidden" name="_action" value="deletePlatform" />
          </Form>
 
-         <div className="bg-gray-800 shadow overflow-hidden sm:rounded-lg">
-            <ul className="divide-y divide-gray-700">
+         <div className="card table-view">
+            <ul className="platform-list">
                {platforms.map((platform) => (
-                  <li key={platform.id} className="p-4 flex justify-between items-center">
+                  <li key={platform.id}>
                      {editingPlatformId === platform.id ? (
-                        <Form method="post" className="flex-grow flex gap-4">
+                        <Form method="post" className="edit-platform-form">
                            <input type="hidden" name="platformId" value={platform.id} />
                            <input
                               type="text"
                               name="platformName"
                               defaultValue={platform.name}
-                              className="flex-grow bg-gray-700 border-gray-600 rounded-md shadow-sm text-white p-2"
                            />
                            <button
                               type="submit"
                               name="_action"
                               value="updatePlatform"
-                              className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-2 rounded"
+                              className="primary"
                            >
                               Save
                            </button>
                            <button
                               type="button"
                               onClick={() => setEditingPlatformId(null)}
-                              className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-2 rounded"
+                              className="cancel"
                            >
                               Cancel
                            </button>
                         </Form>
                      ) : (
                         <>
-                           <span className="text-white">{platform.name}</span>
-                           <div className="flex gap-4">
+                           <span>{platform.name}</span>
+                           <div className="platform-actions">
                               <button
                                  onClick={() => setEditingPlatformId(platform.id)}
-                                 className="text-blue-400 hover:text-blue-200"
+                                 className="edit-link"
                               >
                                  Edit
                               </button>
@@ -193,6 +191,63 @@ export default function AdminPlatforms() {
                   </li>
                ))}
             </ul>
+         </div>
+
+         <div className="card-view">
+            {platforms.map((platform) => (
+               <div key={platform.id} className="card platform-card">
+                  {editingPlatformId === platform.id ? (
+                     <Form method="post" className="edit-platform-form">
+                        <input type="hidden" name="platformId" value={platform.id} />
+                        <div className="platform-card-content">
+                           <input
+                              type="text"
+                              name="platformName"
+                              defaultValue={platform.name}
+                           />
+                           <div className="platform-card-actions">
+                              <button
+                                 type="submit"
+                                 name="_action"
+                                 value="updatePlatform"
+                                 className="button primary small"
+                              >
+                                 Save
+                              </button>
+                              <button
+                                 type="button"
+                                 onClick={() => setEditingPlatformId(null)}
+                                 className="button cancel small"
+                              >
+                                 Cancel
+                              </button>
+                           </div>
+                        </div>
+                     </Form>
+                  ) : (
+                     <div className="platform-card-content">
+                        <div className="platform-card-info">
+                           <h4>{platform.name}</h4>
+                           <p className="platform-show-count">{platform.showCount} show{platform.showCount !== 1 ? 's' : ''}</p>
+                        </div>
+                        <div className="platform-card-actions">
+                           <button
+                              onClick={() => setEditingPlatformId(platform.id)}
+                              className="button secondary small"
+                           >
+                              Edit
+                           </button>
+                           <DeletePlatformButton 
+                              platform={platform} 
+                              showCount={platform.showCount}
+                              onDelete={() => handleDeletePlatform(platform.id)} 
+                              variant="button"
+                           />
+                        </div>
+                     </div>
+                  )}
+               </div>
+            ))}
          </div>
       </div>
    );

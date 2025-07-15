@@ -167,11 +167,11 @@ function RemoveSeasonButton({ show, onRemoveSeason }: { show: FinishedShowInfo, 
       <>
          <button
             onClick={() => setShowConfirmation(true)}
-            className="text-red-400 hover:text-red-200"
+            className="icon-button danger"
             aria-label="Remove season"
             title="Remove season"
          >
-            <MinusCircleIcon className="h-6 w-6" />
+            -
          </button>
          <ConfirmationPopup
             isOpen={showConfirmation}
@@ -212,8 +212,8 @@ export default function FinishedShows() {
    };
 
    return (
-      <div className="space-y-6">
-         <h2 className="text-3xl font-bold text-teal-400">Finished Shows</h2>
+      <div className="finished-shows-page">
+         <h2>Finished Shows</h2>
 
          <Form method="post" ref={setRemoveSeasonFormRef} style={{ display: "none" }}>
             <input type="hidden" name="intent" />
@@ -221,12 +221,9 @@ export default function FinishedShows() {
             <input type="hidden" name="totalSeasons" />
          </Form>
 
-         <Form method="get" className="flex gap-4 p-4 bg-gray-800 rounded-lg">
-            <div className="flex-grow">
-               <label
-                  htmlFor="showName"
-                  className="block text-sm font-medium text-gray-300"
-               >
+         <Form method="get" className="filter-form card horizontal-form">
+            <div className="form-group">
+               <label htmlFor="showName">
                   Show Name
                </label>
                <input
@@ -234,14 +231,10 @@ export default function FinishedShows() {
                   name="showName"
                   id="showName"
                   defaultValue={searchParams.get("showName") ?? ""}
-                  className="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500 sm:text-sm text-white p-2"
                />
             </div>
-            <div className="flex-grow">
-               <label
-                  htmlFor="platform"
-                  className="block text-sm font-medium text-gray-300"
-               >
+            <div className="form-group">
+               <label htmlFor="platform">
                   Platform
                </label>
                <input
@@ -249,96 +242,52 @@ export default function FinishedShows() {
                   name="platform"
                   id="platform"
                   defaultValue={searchParams.get("platform") ?? ""}
-                  className="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500 sm:text-sm text-white p-2"
                />
             </div>
-            <div className="self-end flex gap-2">
-               <button
-                  type="submit"
-                  className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded"
-               >
-                  Search
-               </button>
+            <div className="form-actions">
+               <button type="submit" className="primary">Search</button>
                <Form method="get" className="inline">
-                  <button
-                     type="submit"
-                     className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
-                  >
-                     Clear
-                  </button>
+                  <button type="submit" className="cancel">Clear</button>
                </Form>
             </div>
          </Form>
 
-         <div className="bg-gray-800 shadow overflow-hidden sm:rounded-lg">
-            <table className="min-w-full divide-y divide-gray-700">
-               <thead className="bg-gray-700">
+         <div className="card table-view">
+            <table className="finished-shows-table">
+               <thead>
                   <tr>
-                     <th
-                        scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
-                     >
-                        Show
-                     </th>
-                     <th
-                        scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
-                     >
-                        Platform
-                     </th>
-                     <th
-                        scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
-                     >
-                        Seasons
-                     </th>
-                     <th
-                        scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
-                     >
-                        Watched By
-                     </th>
-                     <th
-                        scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
-                     >
-                        Finished Date
-                     </th>
-                     <th scope="col" className="relative px-6 py-3">
-                        <span className="sr-only">Actions</span>
-                     </th>
+                     <th>Show</th>
+                     <th>Platform</th>
+                     <th>Seasons</th>
+                     <th>Watched By</th>
+                     <th>Finished Date</th>
+                     <th>Actions</th>
                   </tr>
                </thead>
 
-               <tbody className="bg-gray-800 divide-y divide-gray-700">
+               <tbody>
                   {shows.map((show) => (
                      <tr key={show.id}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
-                           <div className="flex items-center gap-2">
+                        <td>
+                           <div className="show-name-cell">
                               {show.name}
                               {show.cancelled && (
-                                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-800 text-red-100">
+                                 <span className="cancelled-tag">
                                     Cancelled
                                  </span>
                               )}
                            </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                           {show.platformName}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                           {show.totalSeasons}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                           {show.watchers.join(", ")}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                        <td>{show.platformName}</td>
+                        <td>{show.totalSeasons}</td>
+                        <td>{show.watchers.join(", ")}</td>
+                        <td>
                            {show.finishedAt
                               ? new Date(show.finishedAt).toLocaleDateString()
                               : "N/A"}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                           <div className="flex gap-4 justify-end items-start">
+                        <td>
+                           <div className="action-cell">
                               <Form method="post" className="inline">
                                  <input type="hidden" name="intent" value="addSeason" />
                                  <input type="hidden" name="showId" value={show.id} />
@@ -349,11 +298,11 @@ export default function FinishedShows() {
                                  />
                                  <button
                                     type="submit"
-                                    className="text-teal-400 hover:text-teal-200"
+                                    className="icon-button primary"
                                     aria-label="Add season"
                                     title="Add a season to the show"
                                  >
-                                    <PlusCircleIcon className="h-6 w-6" />
+                                    +
                                  </button>
                               </Form>
 
@@ -374,13 +323,13 @@ export default function FinishedShows() {
                                  />
                                  <button
                                     type="submit"
-                                    className="text-yellow-400 hover:text-yellow-200"
+                                    className="icon-button warning"
                                     aria-label={
                                        show.cancelled ? "Un-cancel show" : "Cancel show"
                                     }
                                     title={show.cancelled ? "Un-cancel show" : "Cancel show"}
                                  >
-                                    <XCircleIcon className="h-6 w-6" />
+                                    X
                                  </button>
                               </Form>
 
@@ -392,25 +341,94 @@ export default function FinishedShows() {
             </table>
          </div>
 
-         <div className="flex justify-between items-center mt-4">
+         <div className="card-view">
+            {shows.map((show) => (
+               <div key={show.id} className="card finished-show-card">
+                  <div className="finished-show-header">
+                     <h3>
+                        {show.name}
+                        {show.cancelled && (
+                           <span className="cancelled-tag">
+                              Cancelled
+                           </span>
+                        )}
+                     </h3>
+                  </div>
+                  
+                  <div className="finished-show-details">
+                     <p><strong>Platform:</strong> {show.platformName}</p>
+                     <p><strong>Seasons:</strong> {show.totalSeasons}</p>
+                     <p><strong>Watched By:</strong> {show.watchers.join(", ")}</p>
+                     <p><strong>Finished Date:</strong> {show.finishedAt
+                        ? new Date(show.finishedAt).toLocaleDateString()
+                        : "N/A"}</p>
+                  </div>
+
+                  <div className="finished-show-actions">
+                     <Form method="post" className="inline">
+                        <input type="hidden" name="intent" value="addSeason" />
+                        <input type="hidden" name="showId" value={show.id} />
+                        <input
+                           type="hidden"
+                           name="totalSeasons"
+                           value={show.totalSeasons}
+                        />
+                        <button
+                           type="submit"
+                           className="button primary small"
+                           aria-label="Add season"
+                           title="Add a season to the show"
+                        >
+                           Add Season
+                        </button>
+                     </Form>
+
+                     <RemoveSeasonButton 
+                        show={show} 
+                        onRemoveSeason={() => handleRemoveSeason(show.id, show.totalSeasons)} 
+                     />
+
+                     <Form
+                        method="post"
+                        action={`/shows/${show.id}/cancel`}
+                        className="inline"
+                     >
+                        <input
+                           type="hidden"
+                           name="cancelled"
+                           value={show.cancelled.toString()}
+                        />
+                        <button
+                           type="submit"
+                           className="button warning small"
+                           aria-label={
+                              show.cancelled ? "Un-cancel show" : "Cancel show"
+                           }
+                           title={show.cancelled ? "Un-cancel show" : "Cancel show"}
+                        >
+                           {show.cancelled ? "Un-cancel" : "Cancel"}
+                        </button>
+                     </Form>
+                  </div>
+               </div>
+            ))}
+         </div>
+
+         <div className="pagination">
             <Link
                to={getPageLink(page - 1)}
-               className={`bg-teal-500 text-white font-bold py-2 px-4 rounded ${page <= 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-teal-600"
-                  }`}
+               className={`button primary ${page <= 1 ? "disabled" : ""}`}
                aria-disabled={page <= 1}
                onClick={(e) => page <= 1 && e.preventDefault()}
             >
                Previous
             </Link>
-            <span className="text-white">
+            <span>
                Page {page} of {totalPages}
             </span>
             <Link
                to={getPageLink(page + 1)}
-               className={`bg-teal-500 text-white font-bold py-2 px-4 rounded ${page >= totalPages
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:bg-teal-600"
-                  }`}
+               className={`button primary ${page >= totalPages ? "disabled" : ""}`}
                aria-disabled={page >= totalPages}
                onClick={(e) => page >= totalPages && e.preventDefault()}
             >

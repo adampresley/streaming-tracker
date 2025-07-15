@@ -134,13 +134,13 @@ export default function Index() {
    const { currentlyWatching, wantToWatch } = useLoaderData<typeof loader>();
 
    return (
-      <div className="space-y-8">
-         <div className="flex justify-between items-center">
-            <h2 className="text-3xl font-bold text-teal-400 mb-4">Currently Watching</h2>
+      <div className="dashboard">
+         <div className="dashboard-header">
+            <h2>Currently Watching</h2>
 
             <Link
                to="/shows/manage"
-               className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
+               className="button secondary"
             >
                Manage Shows
             </Link>
@@ -148,13 +148,13 @@ export default function Index() {
 
          <div>
             {Object.keys(currentlyWatching).length > 0 ? (
-               <div className="space-y-6">
+               <div className="show-group-container">
                   {Object.entries(currentlyWatching).map(([watcherGroup, shows]) => (
                      <div key={watcherGroup}>
-                        <h3 className="text-2xl font-semibold text-gray-300 mb-2">
+                        <h3>
                            {watcherGroup}
                         </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div className="show-card-grid">
                            {shows.map((show) => (
                               <ShowCard key={show.id} show={show} status="IN_PROGRESS" />
                            ))}
@@ -163,22 +163,22 @@ export default function Index() {
                   ))}
                </div>
             ) : (
-               <p className="text-gray-400">No shows being watched right now.</p>
+               <p>No shows being watched right now.</p>
             )}
          </div>
 
          <div>
-            <h2 className="text-3xl font-bold text-teal-400 mb-4">
+            <h2>
                Want To Watch
             </h2>
             {Object.keys(wantToWatch).length > 0 ? (
-               <div className="space-y-6">
+               <div className="show-group-container">
                   {Object.entries(wantToWatch).map(([watcherGroup, shows]) => (
                      <div key={watcherGroup}>
-                        <h3 className="text-xl font-semibold text-gray-300 mb-2">
+                        <h3>
                            {watcherGroup}
                         </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div className="show-card-grid">
                            {shows.map((show) => (
                               <ShowCard key={show.id} show={show} status="WANT_TO_WATCH" />
                            ))}
@@ -187,7 +187,7 @@ export default function Index() {
                   ))}
                </div>
             ) : (
-               <p className="text-gray-400">
+               <p>
                   Add some shows to your watch list!
                </p>
             )}

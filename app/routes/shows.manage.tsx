@@ -6,6 +6,7 @@ import { eq, and } from "drizzle-orm";
 import { redirect } from "@remix-run/node";
 import { useState } from "react";
 import { requireAuth } from "~/auth.server";
+import { formatUserStatus } from "~/services/userStatus";
 
 interface ShowManageInfo {
    id: number;
@@ -156,21 +157,21 @@ function DeleteShowButton({ show }: { show: ShowManageInfo }) {
 
    if (showConfirmation) {
       return (
-         <div className="flex gap-2 items-center">
+         <div className="confirm-delete">
             <Form method="post" className="inline">
                <input type="hidden" name="showId" value={show.id} />
                <button
                   type="submit"
                   name="_action"
                   value="delete"
-                  className="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded text-sm"
+                  className="button danger small"
                >
                   Yes, Delete
                </button>
             </Form>
             <button
                onClick={() => setShowConfirmation(false)}
-               className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-1 px-2 rounded text-sm"
+               className="button cancel small"
             >
                Cancel
             </button>
@@ -181,7 +182,7 @@ function DeleteShowButton({ show }: { show: ShowManageInfo }) {
    return (
       <button
          onClick={() => setShowConfirmation(true)}
-         className="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded text-sm w-full"
+         className="button danger small full-width"
       >
          Delete Show
       </button>
@@ -193,28 +194,25 @@ export default function ManageShows() {
    const [searchParams, setSearchParams] = useSearchParams();
 
    return (
-      <div className="space-y-8">
-         <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-bold text-teal-400">Manage Shows</h1>
+      <div className="manage-shows-page">
+         <div className="page-header">
+            <h1>Manage Shows</h1>
             <Link
                to="/"
-               className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+               className="button secondary"
             >
                Back to Dashboard
             </Link>
          </div>
 
-         <div className="bg-gray-800 rounded-lg shadow-lg p-4">
-            <div className="flex gap-4 items-center">
-               <label htmlFor="search" className="text-white font-medium">
-                  Search Shows:
-               </label>
+         <div className="card search-card">
+            <div className="search-bar">
+               <label htmlFor="search">Search Shows:</label>
                <input
                   id="search"
                   type="text"
                   defaultValue={searchTerm}
                   placeholder="Enter show name..."
-                  className="bg-gray-700 text-white px-3 py-2 rounded flex-1"
                   onChange={(e) => {
                      const newSearchParams = new URLSearchParams(searchParams);
                      if (e.target.value) {
@@ -234,25 +232,25 @@ export default function ManageShows() {
                         newSearchParams.delete("page");
                         setSearchParams(newSearchParams);
                      }}
-                     className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded"
+                     className="button danger"
                   >
                      Clear
                   </button>
                )}
             </div>
-            <div className="flex justify-between items-center mt-2">
+            <div className="pagination-summary">
                {searchTerm ? (
-                  <p className="text-gray-400 text-sm">
+                  <p>
                      Showing {showsData.length} of {totalShows} show{totalShows !== 1 ? "s" : ""} matching "{searchTerm}"
                   </p>
                ) : (
-                  <p className="text-gray-400 text-sm">
+                  <p>
                      Showing {showsData.length} of {totalShows} show{totalShows !== 1 ? "s" : ""}
                   </p>
                )}
                
                {totalPages > 1 && (
-                  <div className="flex items-center gap-2">
+                  <div className="pagination-controls">
                      <button
                         onClick={() => {
                            const newSearchParams = new URLSearchParams(searchParams);
@@ -260,16 +258,12 @@ export default function ManageShows() {
                            setSearchParams(newSearchParams);
                         }}
                         disabled={currentPage === 1}
-                        className={`px-3 py-1 rounded text-sm ${
-                           currentPage === 1
-                              ? "bg-gray-600 text-gray-400 cursor-not-allowed"
-                              : "bg-blue-500 hover:bg-blue-600 text-white"
-                        }`}
+                        className="button primary small"
                      >
                         Previous
                      </button>
                      
-                     <span className="text-gray-400 text-sm">
+                     <span>
                         Page {currentPage} of {totalPages}
                      </span>
                      
@@ -280,11 +274,7 @@ export default function ManageShows() {
                            setSearchParams(newSearchParams);
                         }}
                         disabled={currentPage === totalPages}
-                        className={`px-3 py-1 rounded text-sm ${
-                           currentPage === totalPages
-                              ? "bg-gray-600 text-gray-400 cursor-not-allowed"
-                              : "bg-blue-500 hover:bg-blue-600 text-white"
-                        }`}
+                        className="button primary small"
                      >
                         Next
                      </button>
@@ -293,87 +283,80 @@ export default function ManageShows() {
             </div>
          </div>
 
-         <div className="space-y-4">
+         <div className="show-list">
             {showsData.map((show) => (
-               <div key={show.id} className="bg-gray-800 rounded-lg shadow-lg p-6">
-                  <div className="flex justify-between items-start">
-                     <div className="flex-1">
-                        <h3 className="text-xl font-bold text-white">{show.name}</h3>
-                        <p className="text-sm text-gray-400">{show.platformName}</p>
-                        <p className="text-sm text-gray-400">{show.totalSeasons} seasons</p>
+               <div key={show.id} className="card show-list-item">
+                  <div className="show-details">
+                     <h3>{show.name}</h3>
+                     <p>{show.platformName}</p>
+                     <p>{show.totalSeasons} seasons</p>
 
-                        <div className="mt-2">
-                           <h4 className="text-sm font-semibold text-gray-300">Watchers:</h4>
-                           <ul className="text-sm text-gray-400">
-                              {show.watchers.map((watcher, index) => (
-                                 <li key={index}>
-                                    {watcher.name} - {watcher.status}
-                                    {watcher.status === "IN_PROGRESS" && ` (Season ${watcher.currentSeason})`}
-                                 </li>
-                              ))}
-                           </ul>
-                        </div>
-
-                        {show.hasWatchedSeasons && (
-                           <p className="text-xs text-yellow-400 mt-2">
-                              ⚠️ Some users have watched seasons - limited actions available
-                           </p>
-                        )}
+                     <div className="watchers-list">
+                        <h4>Watchers:</h4>
+                        <ul>
+                           {show.watchers.map((watcher, index) => (
+                              <li key={index}>
+                                 {watcher.name} - {formatUserStatus(watcher.status)}
+                                 {watcher.status === "IN_PROGRESS" && ` (Season ${watcher.currentSeason})`}
+                              </li>
+                           ))}
+                        </ul>
                      </div>
 
-                     <div className="flex flex-col gap-2 ml-4">
-                        {/* Edit Name */}
-                        <Form method="post" className="flex gap-2">
+                     {show.hasWatchedSeasons && (
+                        <p className="warning-text">
+                           ⚠️ Some users have watched seasons - limited actions available
+                        </p>
+                     )}
+                  </div>
+
+                  <div className="show-actions">
+                     <Form method="post" className="rename-form">
+                        <input type="hidden" name="showId" value={show.id} />
+                        <input
+                           type="text"
+                           name="newName"
+                           defaultValue={show.name}
+                           required
+                        />
+                        <button
+                           type="submit"
+                           name="_action"
+                           value="editName"
+                           className="button primary small"
+                        >
+                           Rename
+                        </button>
+                     </Form>
+
+                     {show.canMoveToWantToWatch && (
+                        <Form method="post">
                            <input type="hidden" name="showId" value={show.id} />
-                           <input
-                              type="text"
-                              name="newName"
-                              defaultValue={show.name}
-                              className="bg-gray-700 text-white px-2 py-1 rounded text-sm"
-                              required
-                           />
                            <button
                               type="submit"
                               name="_action"
-                              value="editName"
-                              className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded text-sm"
+                              value="moveToWantToWatch"
+                              className="button warning small full-width"
                            >
-                              Rename
+                              Move to Want to Watch
                            </button>
                         </Form>
+                     )}
 
-                        {/* Move to Want to Watch */}
-                        {show.canMoveToWantToWatch && (
-                           <Form method="post">
-                              <input type="hidden" name="showId" value={show.id} />
-                              <button
-                                 type="submit"
-                                 name="_action"
-                                 value="moveToWantToWatch"
-                                 className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-2 rounded text-sm w-full"
-                              >
-                                 Move to Want to Watch
-                              </button>
-                           </Form>
-                        )}
+                     {show.canDelete && <DeleteShowButton show={show} />}
 
-                        {/* Delete Show */}
-                        {show.canDelete && <DeleteShowButton show={show} />}
-
-                        {/* Edit Watchers Link */}
-                        <Link
-                           to={`/shows/${show.id}/edit`}
-                           className="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-2 rounded text-sm text-center"
-                        >
-                           Edit Watchers
-                        </Link>
-                     </div>
+                     <Link
+                        to={`/shows/${show.id}/edit`}
+                        className="button secondary small full-width"
+                     >
+                        Edit Watchers
+                     </Link>
                   </div>
                </div>
             ))}
 
             {showsData.length === 0 && (
-               <p className="text-gray-400 text-center">No shows found.</p>
+               <p className="no-results">No shows found.</p>
             )}
          </div>
       </div>

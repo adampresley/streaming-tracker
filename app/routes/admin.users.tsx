@@ -60,12 +60,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
    return redirect("/admin/users");
 };
 
-function DeleteUserButton({ user, showCount, onDelete }: { user: { id: number; name: string }, showCount: number, onDelete: () => void }) {
+function DeleteUserButton({ user, showCount, onDelete, variant = "link" }: { user: { id: number; name: string }, showCount: number, onDelete: () => void, variant?: "link" | "button" }) {
    const [showConfirmation, setShowConfirmation] = useState(false);
 
    if (showCount > 0) {
       return (
-         <span className="text-gray-500 text-sm">
+         <span className="disabled-reason">
             Cannot delete (attached to {showCount} show{showCount !== 1 ? 's' : ''})
          </span>
       );
@@ -75,7 +75,7 @@ function DeleteUserButton({ user, showCount, onDelete }: { user: { id: number; n
       <>
          <button
             onClick={() => setShowConfirmation(true)}
-            className="text-red-400 hover:text-red-200"
+            className={variant === "button" ? "button danger small" : "danger-link"}
          >
             Delete
          </button>
@@ -115,23 +115,22 @@ export default function AdminUsers() {
    };
 
    return (
-      <div className="space-y-6">
-         <h2 className="text-3xl font-bold text-teal-400">Manage Users</h2>
+      <div className="admin-page">
+         <h2>Manage Users</h2>
 
-         <div className="bg-gray-800 p-4 rounded-lg">
-            <h3 className="text-xl font-bold mb-2">Add New User</h3>
-            <Form method="post" className="flex gap-4" ref={formRef}>
+         <div className="card">
+            <h3>Add New User</h3>
+            <Form method="post" className="add-user-form" ref={formRef}>
                <input
                   type="text"
                   name="userName"
                   placeholder="Enter new user name"
-                  className="flex-grow bg-gray-700 border-gray-600 rounded-md shadow-sm text-white p-2"
                />
                <button
                   type="submit"
                   name="_action"
                   value="createUser"
-                  className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded"
+                  className="primary"
                >
                   Add User
                </button>
@@ -143,42 +142,41 @@ export default function AdminUsers() {
             <input type="hidden" name="_action" value="deleteUser" />
          </Form>
 
-         <div className="bg-gray-800 shadow overflow-hidden sm:rounded-lg">
-            <ul className="divide-y divide-gray-700">
+         <div className="card table-view">
+            <ul className="user-list">
                {users.map((user) => (
-                  <li key={user.id} className="p-4 flex justify-between items-center">
+                  <li key={user.id}>
                      {editingUserId === user.id ? (
-                        <Form method="post" className="flex-grow flex gap-4">
+                        <Form method="post" className="edit-user-form">
                            <input type="hidden" name="userId" value={user.id} />
                            <input
                               type="text"
                               name="userName"
                               defaultValue={user.name}
-                              className="flex-grow bg-gray-700 border-gray-600 rounded-md shadow-sm text-white p-2"
                            />
                            <button
                               type="submit"
                               name="_action"
                               value="updateUser"
-                              className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-2 rounded"
+                              className="primary"
                            >
                               Save
                            </button>
                            <button
                               type="button"
                               onClick={() => setEditingUserId(null)}
-                              className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-2 rounded"
+                              className="cancel"
                            >
                               Cancel
                            </button>
                         </Form>
                      ) : (
                         <>
-                           <span className="text-white">{user.name}</span>
-                           <div className="flex gap-4">
+                           <span>{user.name}</span>
+                           <div className="user-actions">
                               <button
                                  onClick={() => setEditingUserId(user.id)}
-                                 className="text-blue-400 hover:text-blue-200"
+                                 className="edit-link"
                               >
                                  Edit
                               </button>
@@ -193,6 +191,63 @@ export default function AdminUsers() {
                   </li>
                ))}
             </ul>
+         </div>
+
+         <div className="card-view">
+            {users.map((user) => (
+               <div key={user.id} className="card user-card">
+                  {editingUserId === user.id ? (
+                     <Form method="post" className="edit-user-form">
+                        <input type="hidden" name="userId" value={user.id} />
+                        <div className="user-card-content">
+                           <input
+                              type="text"
+                              name="userName"
+                              defaultValue={user.name}
+                           />
+                           <div className="user-card-actions">
+                              <button
+                                 type="submit"
+                                 name="_action"
+                                 value="updateUser"
+                                 className="button primary small"
+                              >
+                                 Save
+                              </button>
+                              <button
+                                 type="button"
+                                 onClick={() => setEditingUserId(null)}
+                                 className="button cancel small"
+                              >
+                                 Cancel
+                              </button>
+                           </div>
+                        </div>
+                     </Form>
+                  ) : (
+                     <div className="user-card-content">
+                        <div className="user-card-info">
+                           <h4>{user.name}</h4>
+                           <p className="user-show-count">{user.showCount} show{user.showCount !== 1 ? 's' : ''}</p>
+                        </div>
+                        <div className="user-card-actions">
+                           <button
+                              onClick={() => setEditingUserId(user.id)}
+                              className="button secondary small"
+                           >
+                              Edit
+                           </button>
+                           <DeleteUserButton 
+                              user={user} 
+                              showCount={user.showCount} 
+                              onDelete={() => handleDeleteUser(user.id)} 
+                              variant="button"
+                           />
+                        </div>
+                     </div>
+                  )}
+               </div>
+            ))}
          </div>
       </div>
    );

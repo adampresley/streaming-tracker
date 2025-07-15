@@ -130,46 +130,44 @@ export default function EditShow() {
    );
 
    return (
-      <div className="space-y-8">
-         <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-bold text-teal-400">Edit Show: {show.name}</h1>
+      <div className="edit-show-page">
+         <div className="page-header">
+            <h1>Edit Show: {show.name}</h1>
             <Link
                to="/shows/manage"
-               className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+               className="button secondary"
             >
                Back to Manage Shows
             </Link>
          </div>
 
-         <div className="bg-gray-800 rounded-lg shadow-lg p-6">
-            <h2 className="text-xl font-bold text-white mb-4">Show Details</h2>
-            <p className="text-gray-400">Platform: {show.platformName}</p>
-            <p className="text-gray-400">Total Seasons: {show.totalSeasons}</p>
+         <div className="card show-details-card">
+            <h2>Show Details</h2>
+            <p>Platform: {show.platformName}</p>
+            <p>Total Seasons: {show.totalSeasons}</p>
          </div>
 
-         <div className="bg-gray-800 rounded-lg shadow-lg p-6">
-            <h2 className="text-xl font-bold text-white mb-4">Current Watchers</h2>
+         <div className="card watchers-card">
+            <h2>Current Watchers</h2>
 
             {show.watchers.length > 0 ? (
-               <div className="space-y-4">
+               <div className="watcher-list">
                   {show.watchers.map((watcher) => (
-                     <div key={watcher.userId} className="flex items-center justify-between bg-gray-700 p-4 rounded">
-                        <div>
-                           <h3 className="font-semibold text-white">{watcher.userName}</h3>
-                           <p className="text-sm text-gray-400">
+                     <div key={watcher.userId} className="watcher-item">
+                        <div className="watcher-info">
+                           <h3>{watcher.userName}</h3>
+                           <p>
                               Status: {watcher.status}
                               {watcher.status === "IN_PROGRESS" && ` (Season ${watcher.currentSeason})`}
                            </p>
                         </div>
 
-                        <div className="flex gap-2">
-                           {/* Update Status */}
-                           <Form method="post" className="flex gap-2">
+                        <div className="watcher-actions">
+                           <Form method="post" className="update-status-form">
                               <input type="hidden" name="userId" value={watcher.userId} />
                               <select
                                  name="newStatus"
                                  defaultValue={watcher.status}
-                                 className="bg-gray-600 text-white px-2 py-1 rounded text-sm"
                               >
                                  <option value="WANT_TO_WATCH">Want to Watch</option>
                                  <option value="IN_PROGRESS">In Progress</option>
@@ -179,20 +177,19 @@ export default function EditShow() {
                                  type="submit"
                                  name="_action"
                                  value="updateStatus"
-                                 className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded text-sm"
+                                 className="button primary small"
                               >
                                  Update
                               </button>
                            </Form>
 
-                           {/* Remove Watcher */}
                            <Form method="post">
                               <input type="hidden" name="userId" value={watcher.userId} />
                               <button
                                  type="submit"
                                  name="_action"
                                  value="removeWatcher"
-                                 className="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded text-sm"
+                                 className="button danger small"
                                  onClick={(e) => {
                                     if (!confirm(`Remove ${watcher.userName} from this show?`)) {
                                        e.preventDefault();
@@ -207,23 +204,20 @@ export default function EditShow() {
                   ))}
                </div>
             ) : (
-               <p className="text-gray-400">No watchers for this show.</p>
+               <p>No watchers for this show.</p>
             )}
          </div>
 
          {availableUsers.length > 0 && (
-            <div className="bg-gray-800 rounded-lg shadow-lg p-6">
-               <h2 className="text-xl font-bold text-white mb-4">Add Watcher</h2>
+            <div className="card add-watcher-card">
+               <h2>Add Watcher</h2>
 
-               <Form method="post" className="flex gap-4 items-end">
-                  <div>
-                     <label htmlFor="userId" className="block text-sm font-medium text-gray-300 mb-2">
-                        User
-                     </label>
+               <Form method="post" className="add-watcher-form">
+                  <div className="form-group">
+                     <label htmlFor="userId">User</label>
                      <select
                         name="userId"
                         required
-                        className="bg-gray-700 text-white px-3 py-2 rounded"
                      >
                         <option value="">Select a user...</option>
                         {availableUsers.map((user) => (
@@ -234,14 +228,11 @@ export default function EditShow() {
                      </select>
                   </div>
 
-                  <div>
-                     <label htmlFor="status" className="block text-sm font-medium text-gray-300 mb-2">
-                        Initial Status
-                     </label>
+                  <div className="form-group">
+                     <label htmlFor="status">Initial Status</label>
                      <select
                         name="status"
                         defaultValue="WANT_TO_WATCH"
-                        className="bg-gray-700 text-white px-3 py-2 rounded"
                      >
                         <option value="WANT_TO_WATCH">Want to Watch</option>
                         <option value="IN_PROGRESS">In Progress</option>
@@ -252,7 +243,7 @@ export default function EditShow() {
                      type="submit"
                      name="_action"
                      value="addWatcher"
-                     className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
+                     className="button secondary"
                   >
                      Add Watcher
                   </button>
