@@ -46,7 +46,7 @@ export function ShowCard({
                )}
                {status === "WANT_TO_WATCH" && (
                   <p>
-                     {show.currentSeason > 1 
+                     {show.currentSeason > 1
                         ? `${show.currentSeason - 1} of ${show.totalSeasons} seasons watched`
                         : `${show.totalSeasons} season${show.totalSeasons > 1 ? 's' : ''}`
                      }
@@ -58,6 +58,9 @@ export function ShowCard({
                   <button
                      onClick={() => setShowDropdown(!showDropdown)}
                      className="dropdown-trigger"
+                     title="Actions"
+                     aria-label="Actions"
+                     aria-haspopup="true"
                   >
                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
