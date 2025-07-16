@@ -1,30 +1,30 @@
 import { db } from "../app/db.server";
 import { platforms } from "../drizzle/schema";
 
-const platformList = [
-  "Netflix",
-  "Prime Video",
-  "HBO Max",
-  "Hulu",
-  "Disney+",
-  "Peacock",
-  "Apple TV+",
-  "Crunchyroll",
-  "Paramount+",
-  "Tubi",
-  "Acorn TV",
-  "AMC+",
-  "BritBox",
-  "Fubo",
+const platformList: string[] = [
+   "Netflix",
+   "Prime Video",
+   "HBO Max",
+   "Hulu",
+   "Disney+",
+   "Peacock",
+   "Apple TV+",
+   "Crunchyroll",
+   "Paramount+",
+   "Tubi",
+   "Acorn TV",
+   "AMC+",
+   "BritBox",
+   "Fubo",
 ];
 
 export async function seed() {
-  console.log("Seeding platforms...");
+   console.log("Seeding platforms...");
 
-  await db
-    .insert(platforms)
-    .values(platformList.map((name) => ({ name })))
-    .onConflictDoNothing();
+   await db
+      .insert(platforms)
+      .values(platformList.map((name) => ({ name })))
+      .onConflictDoNothing();
 
-  console.log("Platforms seeded successfully!");
+   console.log("Platforms seeded successfully!");
 }

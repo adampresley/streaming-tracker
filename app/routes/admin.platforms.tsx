@@ -4,12 +4,13 @@ import { Form, useLoaderData } from "@remix-run/react";
 import { db } from "~/db.server";
 import { platforms, shows } from "../../drizzle/schema";
 import { eq, asc, count } from "drizzle-orm";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, RefObject } from "react";
 import ConfirmationPopup from "~/components/ConfirmationPopup";
 import { requireAuth } from "~/auth.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
    await requireAuth(request);
+
    const platformsWithShowCounts = await db
       .select({
          id: platforms.id,
@@ -26,10 +27,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 export const action = async ({ request }: ActionFunctionArgs) => {
    await requireAuth(request);
-   const formData = await request.formData();
-   const action = formData.get("_action");
-   const platformId = Number(formData.get("platformId"));
-   const platformName = formData.get("platformName") as string;
+
+   const formData: FormData = await request.formData();
+   const action: FormDataEntryValue | null = formData.get("_action");
+   const platformId: number = Number(formData.get("platformId"));
+   const platformName: string = formData.get("platformName") as string;
 
    switch (action) {
       case "createPlatform": {
@@ -95,8 +97,8 @@ function DeletePlatformButton({ platform, showCount, onDelete, variant = "link" 
 export default function AdminPlatforms() {
    const { platforms } = useLoaderData<typeof loader>();
    const [editingPlatformId, setEditingPlatformId] = useState<number | null>(null);
-   const formRef = useRef<HTMLFormElement>(null);
-   const deleteFormRef = useRef<HTMLFormElement>(null);
+   const formRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
+   const deleteFormRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
 
    useEffect(() => {
       if (formRef.current) {
@@ -106,10 +108,12 @@ export default function AdminPlatforms() {
 
    const handleDeletePlatform = (platformId: number) => {
       if (deleteFormRef.current) {
-         const platformIdInput = deleteFormRef.current.querySelector('input[name="platformId"]') as HTMLInputElement;
+         const platformIdInput: HTMLInputElement = deleteFormRef.current.querySelector('input[name="platformId"]') as HTMLInputElement;
+
          if (platformIdInput) {
             platformIdInput.value = platformId.toString();
          }
+
          deleteFormRef.current.submit();
       }
    };

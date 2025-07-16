@@ -25,11 +25,12 @@ interface ShowManageInfo {
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
    await requireAuth(request);
-   const url = new URL(request.url);
-   const searchTerm = url.searchParams.get("search") || "";
-   const page = Math.max(1, Number(url.searchParams.get("page")) || 1);
-   const pageSize = Number(process.env.PAGE_SIZE) || 15;
-   const offset = (page - 1) * pageSize;
+
+   const url: URL = new URL(request.url);
+   const searchTerm: string = url.searchParams.get("search") || "";
+   const page: number = Math.max(1, Number(url.searchParams.get("page")) || 1);
+   const pageSize: number = Number(process.env.PAGE_SIZE) || 15;
+   const offset: number = (page - 1) * pageSize;
 
    const allShows = await db.query.shows.findMany({
       with: {
@@ -42,7 +43,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       },
    });
 
-   const filteredShows = allShows
+   const filteredShows: ShowManageInfo[] = allShows
       .filter((show) =>
          searchTerm === "" ||
          show.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -60,11 +61,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
          );
 
          // Can delete if no one has watched any seasons
-         const canDelete = !hasWatchedSeasons;
+         const canDelete: boolean = !hasWatchedSeasons;
 
          // Can move to want-to-watch if currently watching but no one has watched seasons
-         const hasInProgressWatchers = show.showsToUsers.some((stu) => stu.status === "IN_PROGRESS");
-         const canMoveToWantToWatch = hasInProgressWatchers && !hasWatchedSeasons;
+         const hasInProgressWatchers: boolean = show.showsToUsers.some((stu) => stu.status === "IN_PROGRESS");
+         const canMoveToWantToWatch: boolean = hasInProgressWatchers && !hasWatchedSeasons;
 
          return {
             id: show.id,
@@ -79,9 +80,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       })
       .sort((a, b) => a.name.localeCompare(b.name));
 
-   const totalShows = filteredShows.length;
-   const totalPages = Math.ceil(totalShows / pageSize);
-   const showsInfo = filteredShows.slice(offset, offset + pageSize);
+   const totalShows: number = filteredShows.length;
+   const totalPages: number = Math.ceil(totalShows / pageSize);
+   const showsInfo: ShowManageInfo[] = filteredShows.slice(offset, offset + pageSize);
 
    return {
       shows: showsInfo,
@@ -95,9 +96,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 export const action = async ({ request }: ActionFunctionArgs) => {
    await requireAuth(request);
-   const formData = await request.formData();
-   const action = formData.get("_action");
-   const showId = Number(formData.get("showId"));
+   const formData: FormData = await request.formData();
+   const action: FormDataEntryValue | null = formData.get("_action");
+   const showId: number = Number(formData.get("showId"));
 
    if (action === "delete") {
       // Double-check that no one has watched seasons
@@ -105,7 +106,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
          where: eq(showsToUsers.showId, showId),
       });
 
-      const hasWatchedSeasons = showUsers.some((stu) =>
+      const hasWatchedSeasons: boolean = showUsers.some((stu) =>
          stu.currentSeason > 1 || stu.status === "FINISHED"
       );
 
@@ -123,7 +124,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
          where: eq(showsToUsers.showId, showId),
       });
 
-      const hasWatchedSeasons = showUsers.some((stu) =>
+      const hasWatchedSeasons: boolean = showUsers.some((stu) =>
          stu.currentSeason > 1 || stu.status === "FINISHED"
       );
 
@@ -140,7 +141,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
    }
 
    if (action === "editName") {
-      const newName = formData.get("newName") as string;
+      const newName: string = formData.get("newName") as string;
       if (newName && newName.trim()) {
          await db
             .update(shows)
@@ -213,7 +214,8 @@ export default function ManageShows() {
                   defaultValue={searchTerm}
                   placeholder="Enter show name..."
                   onChange={(e) => {
-                     const newSearchParams = new URLSearchParams(searchParams);
+                     const newSearchParams: URLSearchParams = new URLSearchParams(searchParams);
+
                      if (e.target.value) {
                         newSearchParams.set("search", e.target.value);
                      } else {
@@ -226,7 +228,7 @@ export default function ManageShows() {
                {searchTerm && (
                   <button
                      onClick={() => {
-                        const newSearchParams = new URLSearchParams(searchParams);
+                        const newSearchParams: URLSearchParams = new URLSearchParams(searchParams);
                         newSearchParams.delete("search");
                         newSearchParams.delete("page");
                         setSearchParams(newSearchParams);
@@ -252,7 +254,7 @@ export default function ManageShows() {
                   <div className="pagination-controls">
                      <button
                         onClick={() => {
-                           const newSearchParams = new URLSearchParams(searchParams);
+                           const newSearchParams: URLSearchParams = new URLSearchParams(searchParams);
                            newSearchParams.set("page", String(currentPage - 1));
                            setSearchParams(newSearchParams);
                         }}
@@ -268,7 +270,7 @@ export default function ManageShows() {
 
                      <button
                         onClick={() => {
-                           const newSearchParams = new URLSearchParams(searchParams);
+                           const newSearchParams: URLSearchParams = new URLSearchParams(searchParams);
                            newSearchParams.set("page", String(currentPage + 1));
                            setSearchParams(newSearchParams);
                         }}

@@ -5,7 +5,7 @@ import { useState } from "react";
 import ConfirmationPopup from "~/components/ConfirmationPopup";
 import { db } from "~/db.server";
 import { shows, showsToUsers } from "../../drizzle/schema";
-import { eq, gt, and, desc } from "drizzle-orm";
+import { eq, gt, and } from "drizzle-orm";
 import { config } from "dotenv";
 import { requireAuth } from "~/auth.server";
 
@@ -21,13 +21,14 @@ interface FinishedShowInfo {
 
 export const action = async ({ request }: ActionFunctionArgs) => {
    await requireAuth(request);
-   const formData = await request.formData();
-   const intent = formData.get("intent");
-   const showId = Number(formData.get("showId"));
-   const totalSeasons = Number(formData.get("totalSeasons"));
+
+   const formData: FormData = await request.formData();
+   const intent: FormDataEntryValue | null = formData.get("intent");
+   const showId: number = Number(formData.get("showId"));
+   const totalSeasons: number = Number(formData.get("totalSeasons"));
 
    if (intent === "addSeason") {
-      const newTotalSeasons = totalSeasons + 1;
+      const newTotalSeasons: number = totalSeasons + 1;
 
       // Update the total seasons for the show
       await db
@@ -49,7 +50,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
          return redirect("/shows/finished");
       }
 
-      const newTotalSeasons = totalSeasons - 1;
+      const newTotalSeasons: number = totalSeasons - 1;
 
       // Update the total seasons for the show
       await db
@@ -79,11 +80,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
    await requireAuth(request);
    config();
 
-   const url = new URL(request.url);
-   const showNameQuery = url.searchParams.get("showName") || "";
-   const platformQuery = url.searchParams.get("platform") || "";
-   const page = Number(url.searchParams.get("page") || "1");
-   const pageSize = Number(process.env.PAGE_SIZE) || 15;
+   const url: URL = new URL(request.url);
+   const showNameQuery: string = url.searchParams.get("showName") || "";
+   const platformQuery: string = url.searchParams.get("platform") || "";
+   const page: number = Number(url.searchParams.get("page") || "1");
+   const pageSize: number = Number(process.env.PAGE_SIZE) || 15;
 
    const finishedShowsWithWatchers = await db.query.showsToUsers.findMany({
       where: eq(showsToUsers.status, "FINISHED"),
@@ -97,14 +98,16 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       },
    });
 
-   const showsMap = new Map<number, FinishedShowInfo>();
+   const showsMap: Map<number, FinishedShowInfo> = new Map<number, FinishedShowInfo>();
+
    finishedShowsWithWatchers.forEach((stu) => {
       const { show, user } = stu;
 
       // Defensively check for a valid date
       let finishedAt: string | null = null;
       if (stu.finishedAt) {
-         const date = new Date(stu.finishedAt);
+         const date: Date = new Date(stu.finishedAt);
+
          if (!isNaN(date.getTime())) {
             finishedAt = date.toISOString();
          }
@@ -141,11 +144,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
    // Sort by show name
    filteredShows.sort((a, b) => a.name.localeCompare(b.name));
 
-   const totalShows = filteredShows.length;
-   const totalPages = Math.ceil(totalShows / pageSize);
-   const offset = (page - 1) * pageSize;
+   const totalShows: number = filteredShows.length;
+   const totalPages: number = Math.ceil(totalShows / pageSize);
+   const offset: number = (page - 1) * pageSize;
 
-   const showsForPage = filteredShows.slice(offset, offset + pageSize);
+   const showsForPage: FinishedShowInfo[] = filteredShows.slice(offset, offset + pageSize);
 
    return { shows: showsForPage, page, totalPages };
 };
@@ -186,16 +189,16 @@ export default function FinishedShows() {
    const [removeSeasonFormRef, setRemoveSeasonFormRef] = useState<HTMLFormElement | null>(null);
 
    const getPageLink = (p: number) => {
-      const newParams = new URLSearchParams(searchParams);
+      const newParams: URLSearchParams = new URLSearchParams(searchParams);
       newParams.set("page", p.toString());
       return `/shows/finished?${newParams.toString()}`;
    };
 
    const handleRemoveSeason = (showId: number, totalSeasons: number) => {
       if (removeSeasonFormRef) {
-         const intentInput = removeSeasonFormRef.querySelector('input[name="intent"]') as HTMLInputElement;
-         const showIdInput = removeSeasonFormRef.querySelector('input[name="showId"]') as HTMLInputElement;
-         const totalSeasonsInput = removeSeasonFormRef.querySelector('input[name="totalSeasons"]') as HTMLInputElement;
+         const intentInput: HTMLInputElement = removeSeasonFormRef.querySelector('input[name="intent"]') as HTMLInputElement;
+         const showIdInput: HTMLInputElement = removeSeasonFormRef.querySelector('input[name="showId"]') as HTMLInputElement;
+         const totalSeasonsInput: HTMLInputElement = removeSeasonFormRef.querySelector('input[name="totalSeasons"]') as HTMLInputElement;
 
          if (intentInput) intentInput.value = "removeSeason";
          if (showIdInput) showIdInput.value = showId.toString();

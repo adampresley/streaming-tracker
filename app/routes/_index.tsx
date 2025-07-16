@@ -23,6 +23,7 @@ interface GroupedShows {
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
    await requireAuth(request);
+
    // 1. Fetch all shows with their watchers and platform
    const allShowsWithWatchers = await db.query.showsToUsers.findMany({
       with: {
@@ -38,8 +39,10 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
    // 2. Process the data into a more useful map
    const showsMap = new Map<number, ShowInfo>();
+
    allShowsWithWatchers.forEach((stu) => {
       const { show, user } = stu;
+
       if (!showsMap.has(show.id)) {
          showsMap.set(show.id, {
             id: show.id,
@@ -50,6 +53,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
             watchers: [],
          });
       }
+
       showsMap.get(show.id)!.watchers.push(user.name);
    });
 
@@ -58,8 +62,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
    const wantToWatch: GroupedShows = {};
 
    allShowsWithWatchers.forEach((stu) => {
-      const showInfo = showsMap.get(stu.showId)!;
-      const watcherGroup = showInfo.watchers.sort().join(", ");
+      const showInfo: ShowInfo = showsMap.get(stu.showId)!;
+      const watcherGroup: string = showInfo.watchers.sort().join(", ");
 
       if (stu.status === "IN_PROGRESS") {
          if (!currentlyWatching[watcherGroup]) {
@@ -88,15 +92,14 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 export const action = async ({ request }: ActionFunctionArgs) => {
    await requireAuth(request);
-   const formData = await request.formData();
-   const action = formData.get("_action");
-   const showId = Number(formData.get("showId"));
 
-   console.log("Action received:", action, "for showId:", showId);
+   const formData: FormData = await request.formData();
+   const action: FormDataEntryValue | null = formData.get("_action");
+   const showId: number = Number(formData.get("showId"));
 
    if (action === "completeSeason") {
-      const currentSeason = Number(formData.get("currentSeason"));
-      const totalSeasons = Number(formData.get("totalSeasons"));
+      const currentSeason: number = Number(formData.get("currentSeason"));
+      const totalSeasons: number = Number(formData.get("totalSeasons"));
 
       if (currentSeason < totalSeasons) {
          // Just increment the season

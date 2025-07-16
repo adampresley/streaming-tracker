@@ -7,9 +7,10 @@ import { requireAuth } from "~/auth.server";
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
    await requireAuth(request);
-   const showId = Number(params.showId);
-   const formData = await request.formData();
-   const cancelled = formData.get("cancelled") === "true";
+
+   const showId: number = Number(params.showId);
+   const formData: FormData = await request.formData();
+   const cancelled: boolean = formData.get("cancelled") === "true";
 
    await db
       .update(shows)

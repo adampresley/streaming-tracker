@@ -5,6 +5,7 @@ import { showsToUsers } from "../../drizzle/schema";
 import { eq, and } from "drizzle-orm";
 import { redirect } from "@remix-run/node";
 import { requireAuth } from "~/auth.server";
+import { ShowStatus } from "~/types/db-types";
 
 interface ShowEditInfo {
    id: number;
@@ -14,7 +15,7 @@ interface ShowEditInfo {
    watchers: Array<{
       userId: number;
       userName: string;
-      status: string;
+      status: ShowStatus;
       currentSeason: number;
    }>;
    allUsers: Array<{
@@ -25,7 +26,8 @@ interface ShowEditInfo {
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
    await requireAuth(request);
-   const showId = Number(params.showId);
+
+   const showId: number = Number(params.showId);
 
    const show = await db.query.shows.findFirst({
       where: (shows, { eq }) => eq(shows.id, showId),
@@ -66,13 +68,14 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
    await requireAuth(request);
-   const showId = Number(params.showId);
-   const formData = await request.formData();
-   const action = formData.get("_action");
+
+   const showId: number = Number(params.showId);
+   const formData: FormData = await request.formData();
+   const action: FormDataEntryValue | null = formData.get("_action");
 
    if (action === "addWatcher") {
-      const userId = Number(formData.get("userId"));
-      const status = formData.get("status") as string;
+      const userId: number = Number(formData.get("userId"));
+      const status: ShowStatus = formData.get("status") as ShowStatus;
 
       // Check if user is already watching this show
       const existingWatcher = await db.query.showsToUsers.findFirst({
@@ -86,14 +89,14 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
          await db.insert(showsToUsers).values({
             showId,
             userId,
-            status: status || "WANT_TO_WATCH",
+            status: status || "WANT_TO_WATCH" as ShowStatus,
             currentSeason: 1,
          });
       }
    }
 
    if (action === "removeWatcher") {
-      const userId = Number(formData.get("userId"));
+      const userId: number = Number(formData.get("userId"));
 
       await db
          .delete(showsToUsers)
@@ -104,8 +107,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
    }
 
    if (action === "updateStatus") {
-      const userId = Number(formData.get("userId"));
-      const newStatus = formData.get("newStatus") as string;
+      const userId: number = Number(formData.get("userId"));
+      const newStatus: ShowStatus = formData.get("newStatus") as ShowStatus;
 
       await db
          .update(showsToUsers)

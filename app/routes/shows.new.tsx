@@ -4,9 +4,11 @@ import { Form, useLoaderData } from "@remix-run/react";
 import { db } from "~/db.server";
 import { shows, showsToUsers } from "../../drizzle/schema";
 import { requireAuth } from "~/auth.server";
+import { ShowStatus } from "~/types/db-types";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
    await requireAuth(request);
+
    const [allUsers, allPlatforms] = await Promise.all([
       db.query.users.findMany(),
       db.query.platforms.findMany(),
@@ -17,10 +19,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 export const action = async ({ request }: ActionFunctionArgs) => {
    await requireAuth(request);
-   const formData = await request.formData();
-   const name = formData.get("name") as string;
-   const totalSeasons = Number(formData.get("totalSeasons"));
-   const platformId = Number(formData.get("platformId"));
+
+   const formData: FormData = await request.formData();
+   const name: string = formData.get("name") as string;
+   const totalSeasons: number = Number(formData.get("totalSeasons"));
+   const platformId: number = Number(formData.get("platformId"));
    const userIds: number[] = formData.getAll("userIds").map(Number);
 
    if (!name || !totalSeasons || !platformId || userIds.length === 0) {
@@ -38,7 +41,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       userIds.map((userId) => ({
          showId: newShow.id,
          userId: userId,
-         status: "WANT_TO_WATCH" as const,
+         status: "WANT_TO_WATCH" as ShowStatus,
       }))
    );
 

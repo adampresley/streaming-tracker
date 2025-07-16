@@ -10,6 +10,7 @@ import { requireAuth } from "~/auth.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
    await requireAuth(request);
+
    const usersWithShowCounts = await db
       .select({
          id: users.id,
@@ -26,10 +27,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 export const action = async ({ request }: ActionFunctionArgs) => {
    await requireAuth(request);
-   const formData = await request.formData();
-   const action = formData.get("_action");
-   const userId = Number(formData.get("userId"));
-   const userName = formData.get("userName") as string;
+
+   const formData: FormData = await request.formData();
+   const action: FormDataEntryValue | null = formData.get("_action");
+   const userId: number = Number(formData.get("userId"));
+   const userName: string = formData.get("userName") as string;
 
    switch (action) {
       case "createUser": {
@@ -95,8 +97,8 @@ function DeleteUserButton({ user, showCount, onDelete, variant = "link" }: { use
 export default function AdminUsers() {
    const { users } = useLoaderData<typeof loader>();
    const [editingUserId, setEditingUserId] = useState<number | null>(null);
-   const formRef = useRef<HTMLFormElement>(null);
-   const deleteFormRef = useRef<HTMLFormElement>(null);
+   const formRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
+   const deleteFormRef: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
 
    useEffect(() => {
       if (formRef.current) {
@@ -106,10 +108,12 @@ export default function AdminUsers() {
 
    const handleDeleteUser = (userId: number) => {
       if (deleteFormRef.current) {
-         const userIdInput = deleteFormRef.current.querySelector('input[name="userId"]') as HTMLInputElement;
+         const userIdInput: HTMLInputElement = deleteFormRef.current.querySelector('input[name="userId"]') as HTMLInputElement;
+
          if (userIdInput) {
             userIdInput.value = userId.toString();
          }
+
          deleteFormRef.current.submit();
       }
    };

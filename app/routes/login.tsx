@@ -1,15 +1,15 @@
-import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import { ActionFunctionArgs, LoaderFunctionArgs, Session, SessionData } from "@remix-run/node";
 import { Form, useActionData, redirect } from "@remix-run/react";
 import { createUserSession, getUserSession, verifyPassword } from "~/auth.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-   const session = await getUserSession(request);
-   const isAuthenticated = session.get("authenticated");
-   const loginTime = session.get("loginTime");
+   const session: Session<SessionData, SessionData> = await getUserSession(request);
+   const isAuthenticated: boolean = session.get("authenticated");
+   const loginTime: number = session.get("loginTime");
 
    if (isAuthenticated && loginTime) {
-      const now = Date.now();
-      const fourHoursInMs = 4 * 60 * 60 * 1000;
+      const now: number = Date.now();
+      const fourHoursInMs: number = 4 * 60 * 60 * 1000;
 
       if (now - loginTime <= fourHoursInMs) {
          return redirect("/");
@@ -20,8 +20,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-   const formData = await request.formData();
-   const password = formData.get("password");
+   const formData: FormData = await request.formData();
+   const password: FormDataEntryValue | null = formData.get("password");
 
    if (!password || typeof password !== "string") {
       return { error: "Password is required" };
