@@ -7,11 +7,15 @@ TAR_FILE = $(IMAGE_NAME)-$(TAG).tar
 .PHONY: help
 help:
 	@echo "Available targets:"
-	@echo "  build       - Build Docker image"
-	@echo "  build-tar   - Build Docker image and export as TAR"
-	@echo "  clean       - Remove Docker image and TAR file"
-	@echo "  run         - Run the Docker container"
-	@echo "  stop        - Stop running containers"
+	@echo "  build              - Build Docker image"
+	@echo "  build-tar          - Build Docker image and export as TAR"
+	@echo "  clean              - Remove Docker image and TAR file"
+	@echo "  run                - Run the Docker container"
+	@echo "  stop               - Stop running containers"
+	@echo "  load               - Load TAR file into Docker"
+	@echo "  increment-major    - Increment major version, commit, and push"
+	@echo "  increment-minor    - Increment minor version, commit, and push"
+	@echo "  increment-hotfix   - Increment hotfix/patch version, commit, and push"
 
 # Build Docker image
 .PHONY: build
@@ -45,3 +49,22 @@ stop:
 .PHONY: load
 load:
 	docker load -i $(TAR_FILE)
+
+# Versioning
+.PHONY: increment-major
+increment-major:
+	npm version major
+	git push origin main
+	git push origin --tags
+
+.PHONY: increment-minor
+increment-minor:
+	npm version minor
+	git push origin main
+	git push origin --tags
+
+.PHONY: increment-hotfix
+increment-hotfix:
+	npm version patch
+	git push origin main
+	git push origin --tags
