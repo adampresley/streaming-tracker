@@ -1,6 +1,12 @@
 import { ActionFunctionArgs, LoaderFunctionArgs, Session, SessionData } from "@remix-run/node";
-import { Form, useActionData, redirect } from "@remix-run/react";
+import { Form, useActionData, redirect, MetaFunction } from "@remix-run/react";
 import { createUserSession, getUserSession, verifyPassword } from "~/auth.server";
+
+export const meta: MetaFunction = () => {
+   return [
+      { title: "Login | Streaming Tracker" },
+   ];
+};
 
 export async function loader({ request }: LoaderFunctionArgs) {
    const session: Session<SessionData, SessionData> = await getUserSession(request);

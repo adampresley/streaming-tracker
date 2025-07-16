@@ -1,12 +1,18 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import { Form, MetaFunction, useLoaderData } from "@remix-run/react";
 import { db } from "~/db.server";
 import { platforms, shows } from "../../drizzle/schema";
 import { eq, asc, count } from "drizzle-orm";
 import { useState, useRef, useEffect, RefObject } from "react";
 import ConfirmationPopup from "~/components/ConfirmationPopup";
 import { requireAuth } from "~/auth.server";
+
+export const meta: MetaFunction = () => {
+   return [
+      { title: "Manage Platforms | Streaming Tracker" },
+   ];
+};
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
    await requireAuth(request);

@@ -1,6 +1,6 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
-import { Form, useLoaderData, useSearchParams, Link } from "@remix-run/react";
+import { Form, useLoaderData, useSearchParams, Link, MetaFunction } from "@remix-run/react";
 import { useState } from "react";
 import ConfirmationPopup from "~/components/ConfirmationPopup";
 import { db } from "~/db.server";
@@ -18,6 +18,12 @@ interface FinishedShowInfo {
    cancelled: boolean;
    finishedAt: string | null;
 }
+
+export const meta: MetaFunction = () => {
+   return [
+      { title: "Finished Shows | Streaming Tracker" },
+   ];
+};
 
 export const action = async ({ request }: ActionFunctionArgs) => {
    await requireAuth(request);

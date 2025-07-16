@@ -1,5 +1,5 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { Form, Link, useLoaderData, useSearchParams } from "@remix-run/react";
+import { Form, Link, MetaFunction, useLoaderData, useSearchParams } from "@remix-run/react";
 import { db } from "~/db.server";
 import { shows, showsToUsers } from "../../drizzle/schema";
 import { eq, and } from "drizzle-orm";
@@ -22,6 +22,12 @@ interface ShowManageInfo {
    canDelete: boolean;
    canMoveToWantToWatch: boolean;
 }
+
+export const meta: MetaFunction = () => {
+   return [
+      { title: "Manage Shows | Streaming Tracker" },
+   ];
+};
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
    await requireAuth(request);

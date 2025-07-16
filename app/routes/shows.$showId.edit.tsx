@@ -1,4 +1,4 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { Form, Link, useLoaderData } from "@remix-run/react";
 import { db } from "~/db.server";
 import { showsToUsers } from "../../drizzle/schema";
@@ -24,6 +24,12 @@ interface ShowEditInfo {
       name: string;
    }>;
 }
+
+export const meta: MetaFunction = () => {
+   return [
+      { title: "Edit Show | Streaming Tracker" },
+   ];
+};
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
    await requireAuth(request);

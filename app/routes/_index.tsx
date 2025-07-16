@@ -1,4 +1,4 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import { ShowCard } from "~/components/ShowCard";
 import { db } from "~/db.server";
@@ -20,6 +20,12 @@ interface ShowInfo {
 interface GroupedShows {
    [watcherGroup: string]: ShowInfo[];
 }
+
+export const meta: MetaFunction = () => {
+   return [
+      { title: "Dashboard | Streaming Tracker" },
+   ];
+};
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
    await requireAuth(request);

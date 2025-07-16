@@ -1,10 +1,16 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import { Form, MetaFunction, useLoaderData } from "@remix-run/react";
 import { db } from "~/db.server";
 import { shows, showsToUsers } from "../../drizzle/schema";
 import { requireAuth } from "~/auth.server";
 import { ShowStatus } from "~/types/db-types";
+
+export const meta: MetaFunction = () => {
+   return [
+      { title: "Create New Show | Streaming Tracker" },
+   ];
+};
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
    await requireAuth(request);
