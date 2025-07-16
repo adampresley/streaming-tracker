@@ -201,10 +201,10 @@ h4 {
 a {
    color: var(--primary-light);
    text-decoration: none;
-}
 
-a:hover {
-   text-decoration: underline;
+   &:hover {
+      text-decoration: underline;
+   }
 }
 
 p {
@@ -223,12 +223,9 @@ header {
    padding: 1rem;
    box-shadow: var(--shadow-md);
    margin-bottom: 2rem;
-
-   .container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-   }
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
 
    nav ul {
       display: flex;
@@ -243,23 +240,23 @@ header {
 
    .logout {
       color: var(--error);
-   }
 
-   .logout:hover {
-      color: var(--error-light);
+      &:hover {
+         color: var(--error-light);
+      }
    }
 }
 
 main {
    padding: 2rem 0;
-}
 
-main.logged-out {
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   min-height: 100vh;
-   padding: 0;
+   &.logged-out {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 0;
+   }
 }
 
 footer {

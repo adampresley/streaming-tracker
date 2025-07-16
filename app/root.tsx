@@ -41,82 +41,80 @@ export default function App() {
       <>
          {isAuth && (
             <header>
-               <div className="container">
-                  <h1>
-                     Streaming Tracker
-                  </h1>
-                  <button className="hamburger-menu" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-                     &#9776;
-                  </button>
-                  <nav className={isMenuOpen ? "mobile-menu open" : "mobile-menu"}>
-                     <ul>
-                        <li>
-                           <NavLink
-                              to="/"
-                              className={({ isActive }) =>
-                                 isActive ? "active" : ""
-                              }
-                              onClick={() => setIsMenuOpen(false)}
-                           >
-                              Dashboard
-                           </NavLink>
-                        </li>
-                        <li>
-                           <NavLink
-                              to="/shows/finished"
-                              className={({ isActive }) =>
-                                 isActive ? "active" : ""
-                              }
-                              onClick={() => setIsMenuOpen(false)}
-                           >
-                              Finished Shows
-                           </NavLink>
-                        </li>
-                        <li>
-                           <NavLink
-                              to="/admin/users"
-                              className={({ isActive }) =>
-                                 isActive ? "active" : ""
-                              }
-                              onClick={() => setIsMenuOpen(false)}
-                           >
-                              Users
-                           </NavLink>
-                        </li>
-                        <li>
-                           <NavLink
-                              to="/admin/platforms"
-                              className={({ isActive }) =>
-                                 isActive ? "active" : ""
-                              }
-                              onClick={() => setIsMenuOpen(false)}
-                           >
-                              Platforms
-                           </NavLink>
-                        </li>
-                        <li>
-                           <NavLink
-                              to="/shows/new"
-                              className={({ isActive }) =>
-                                 isActive ? "active" : ""
-                              }
-                              onClick={() => setIsMenuOpen(false)}
-                           >
-                              Add Show
-                           </NavLink>
-                        </li>
-                        <li>
-                           <NavLink
-                              to="/logout"
-                              className="logout"
-                              onClick={() => setIsMenuOpen(false)}
-                           >
-                              Logout
-                           </NavLink>
-                        </li>
-                     </ul>
-                  </nav>
-               </div>
+               <h1>
+                  Streaming Tracker
+               </h1>
+               <button className="hamburger-menu" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                  &#9776;
+               </button>
+               <nav className={isMenuOpen ? "mobile-menu open" : "mobile-menu"}>
+                  <ul>
+                     <li>
+                        <NavLink
+                           to="/"
+                           className={({ isActive }) =>
+                              isActive ? "active" : ""
+                           }
+                           onClick={() => setIsMenuOpen(false)}
+                        >
+                           Dashboard
+                        </NavLink>
+                     </li>
+                     <li>
+                        <NavLink
+                           to="/shows/finished"
+                           className={({ isActive }) =>
+                              isActive ? "active" : ""
+                           }
+                           onClick={() => setIsMenuOpen(false)}
+                        >
+                           Finished Shows
+                        </NavLink>
+                     </li>
+                     <li>
+                        <NavLink
+                           to="/admin/users"
+                           className={({ isActive }) =>
+                              isActive ? "active" : ""
+                           }
+                           onClick={() => setIsMenuOpen(false)}
+                        >
+                           Users
+                        </NavLink>
+                     </li>
+                     <li>
+                        <NavLink
+                           to="/admin/platforms"
+                           className={({ isActive }) =>
+                              isActive ? "active" : ""
+                           }
+                           onClick={() => setIsMenuOpen(false)}
+                        >
+                           Platforms
+                        </NavLink>
+                     </li>
+                     <li>
+                        <NavLink
+                           to="/shows/new"
+                           className={({ isActive }) =>
+                              isActive ? "active" : ""
+                           }
+                           onClick={() => setIsMenuOpen(false)}
+                        >
+                           Add Show
+                        </NavLink>
+                     </li>
+                     <li>
+                        <NavLink
+                           to="/logout"
+                           className="logout"
+                           onClick={() => setIsMenuOpen(false)}
+                        >
+                           Logout
+                        </NavLink>
+                     </li>
+                  </ul>
+               </nav>
             </header>
          )}
          <main className={isAuth ? "" : "logged-out"}>
