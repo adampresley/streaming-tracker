@@ -11,6 +11,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       db.query.users.findMany(),
       db.query.platforms.findMany(),
    ]);
+
    return { users: allUsers, platforms: allPlatforms };
 };
 
@@ -20,7 +21,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
    const name = formData.get("name") as string;
    const totalSeasons = Number(formData.get("totalSeasons"));
    const platformId = Number(formData.get("platformId"));
-   const userIds = formData.getAll("userIds").map(Number);
+   const userIds: number[] = formData.getAll("userIds").map(Number);
 
    if (!name || !totalSeasons || !platformId || userIds.length === 0) {
       return new Response(JSON.stringify({ error: "All fields are required" }), { status: 400 });
@@ -37,7 +38,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       userIds.map((userId) => ({
          showId: newShow.id,
          userId: userId,
-         status: "WANT_TO_WATCH",
+         status: "WANT_TO_WATCH" as const,
       }))
    );
 
