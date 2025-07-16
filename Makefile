@@ -15,7 +15,7 @@ help:
 	@echo "  load               - Load TAR file into Docker"
 	@echo "  increment-major    - Increment major version, commit, and push"
 	@echo "  increment-minor    - Increment minor version, commit, and push"
-	@echo "  increment-hotfix   - Increment hotfix/patch version, commit, and push"
+	@echo "  increment-patch    - Increment hotfix/patch version, commit, and push"
 
 # Build Docker image
 .PHONY: build
@@ -63,8 +63,8 @@ increment-minor:
 	git push origin main
 	git push origin --tags
 
-.PHONY: increment-hotfix
-increment-hotfix:
+.PHONY: increment-patch
+increment-patch:
 	npm version patch
 	git push origin main
 	git push origin --tags
