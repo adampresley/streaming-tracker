@@ -6,6 +6,7 @@ import { eq, and } from "drizzle-orm";
 import { redirect } from "@remix-run/node";
 import { requireAuth } from "~/auth.server";
 import { ShowStatus } from "~/types/db-types";
+import { formatUserStatus } from "~/services/userStatus";
 
 interface ShowEditInfo {
    id: number;
@@ -160,7 +161,7 @@ export default function EditShow() {
                         <div className="watcher-info">
                            <h3>{watcher.userName}</h3>
                            <p>
-                              Status: {watcher.status}
+                              Status: {formatUserStatus(watcher.status)}
                               {watcher.status === "IN_PROGRESS" && ` (Season ${watcher.currentSeason})`}
                            </p>
                         </div>
@@ -173,7 +174,7 @@ export default function EditShow() {
                                  defaultValue={watcher.status}
                               >
                                  <option value="WANT_TO_WATCH">Want to Watch</option>
-                                 <option value="IN_PROGRESS">In Progress</option>
+                                 <option value="IN_PROGRESS">Watching</option>
                                  <option value="FINISHED">Finished</option>
                               </select>
                               <button
@@ -236,7 +237,8 @@ export default function EditShow() {
                         defaultValue="WANT_TO_WATCH"
                      >
                         <option value="WANT_TO_WATCH">Want to Watch</option>
-                        <option value="IN_PROGRESS">In Progress</option>
+                        <option value="IN_PROGRESS">Watching</option>
+                        <option value="FINISHED">Finished</option>
                      </select>
                   </div>
 
