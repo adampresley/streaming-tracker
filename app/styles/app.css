@@ -233,16 +233,19 @@ header {
       align-items: center;
    }
 
-   a.active {
-      color: var(--primary);
-      font-weight: bold;
-   }
+   a {
+      color: var(--text-light);
 
-   .logout {
-      color: var(--error);
+      &.active {
+         font-weight: bold;
+      }
 
-      &:hover {
-         color: var(--error-light);
+      &.logout {
+         color: var(--error);
+
+         &:hover {
+            color: var(--error-light);
+         }
       }
    }
 }
