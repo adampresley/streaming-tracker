@@ -106,7 +106,7 @@ export default function NewShow() {
             </div>
 
             <div>
-               <button type="submit" className="button primary full-width">Add Show</button>
+               <button className="primary full-width">Add Show</button>
             </div>
          </Form>
       </div>

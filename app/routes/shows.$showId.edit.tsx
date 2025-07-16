@@ -174,10 +174,9 @@ export default function EditShow() {
                                  <option value="FINISHED">Finished</option>
                               </select>
                               <button
-                                 type="submit"
                                  name="_action"
                                  value="updateStatus"
-                                 className="button primary small"
+                                 className="primary small"
                               >
                                  Update
                               </button>
@@ -186,10 +185,9 @@ export default function EditShow() {
                            <Form method="post">
                               <input type="hidden" name="userId" value={watcher.userId} />
                               <button
-                                 type="submit"
                                  name="_action"
                                  value="removeWatcher"
-                                 className="button danger small"
+                                 className="danger small"
                                  onClick={(e) => {
                                     if (!confirm(`Remove ${watcher.userName} from this show?`)) {
                                        e.preventDefault();
@@ -240,10 +238,9 @@ export default function EditShow() {
                   </div>
 
                   <button
-                     type="submit"
                      name="_action"
                      value="addWatcher"
-                     className="button secondary"
+                     className="secondary"
                   >
                      Add Watcher
                   </button>

@@ -75,7 +75,7 @@ function DeletePlatformButton({ platform, showCount, onDelete, variant = "link" 
       <>
          <button
             onClick={() => setShowConfirmation(true)}
-            className={variant === "button" ? "button danger small" : "danger-link"}
+            className={variant === "button" ? "danger small" : "danger-link"}
          >
             Delete
          </button>
@@ -127,7 +127,6 @@ export default function AdminPlatforms() {
                   placeholder="Enter new platform name"
                />
                <button
-                  type="submit"
                   name="_action"
                   value="createPlatform"
                   className="primary"
@@ -155,7 +154,6 @@ export default function AdminPlatforms() {
                               defaultValue={platform.name}
                            />
                            <button
-                              type="submit"
                               name="_action"
                               value="updatePlatform"
                               className="primary"
@@ -180,10 +178,10 @@ export default function AdminPlatforms() {
                               >
                                  Edit
                               </button>
-                              <DeletePlatformButton 
-                                 platform={platform} 
+                              <DeletePlatformButton
+                                 platform={platform}
                                  showCount={platform.showCount}
-                                 onDelete={() => handleDeletePlatform(platform.id)} 
+                                 onDelete={() => handleDeletePlatform(platform.id)}
                               />
                            </div>
                         </>
@@ -207,17 +205,16 @@ export default function AdminPlatforms() {
                            />
                            <div className="platform-card-actions">
                               <button
-                                 type="submit"
                                  name="_action"
                                  value="updatePlatform"
-                                 className="button primary small"
+                                 className="primary small"
                               >
                                  Save
                               </button>
                               <button
                                  type="button"
                                  onClick={() => setEditingPlatformId(null)}
-                                 className="button cancel small"
+                                 className="cancel small"
                               >
                                  Cancel
                               </button>
@@ -233,14 +230,14 @@ export default function AdminPlatforms() {
                         <div className="platform-card-actions">
                            <button
                               onClick={() => setEditingPlatformId(platform.id)}
-                              className="button secondary small"
+                              className="secondary small"
                            >
                               Edit
                            </button>
-                           <DeletePlatformButton 
-                              platform={platform} 
+                           <DeletePlatformButton
+                              platform={platform}
                               showCount={platform.showCount}
-                              onDelete={() => handleDeletePlatform(platform.id)} 
+                              onDelete={() => handleDeletePlatform(platform.id)}
                               variant="button"
                            />
                         </div>

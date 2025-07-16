@@ -83,9 +83,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
    const totalPages = Math.ceil(totalShows / pageSize);
    const showsInfo = filteredShows.slice(offset, offset + pageSize);
 
-   return { 
-      shows: showsInfo, 
-      searchTerm, 
+   return {
+      shows: showsInfo,
+      searchTerm,
       currentPage: page,
       totalPages,
       totalShows,
@@ -161,17 +161,16 @@ function DeleteShowButton({ show }: { show: ShowManageInfo }) {
             <Form method="post" className="inline">
                <input type="hidden" name="showId" value={show.id} />
                <button
-                  type="submit"
                   name="_action"
                   value="delete"
-                  className="button danger small"
+                  className="danger small"
                >
                   Yes, Delete
                </button>
             </Form>
             <button
                onClick={() => setShowConfirmation(false)}
-               className="button cancel small"
+               className="cancel small"
             >
                Cancel
             </button>
@@ -182,7 +181,7 @@ function DeleteShowButton({ show }: { show: ShowManageInfo }) {
    return (
       <button
          onClick={() => setShowConfirmation(true)}
-         className="button danger small full-width"
+         className="danger small full-width"
       >
          Delete Show
       </button>
@@ -232,7 +231,7 @@ export default function ManageShows() {
                         newSearchParams.delete("page");
                         setSearchParams(newSearchParams);
                      }}
-                     className="button danger"
+                     className="danger"
                   >
                      Clear
                   </button>
@@ -248,7 +247,7 @@ export default function ManageShows() {
                      Showing {showsData.length} of {totalShows} show{totalShows !== 1 ? "s" : ""}
                   </p>
                )}
-               
+
                {totalPages > 1 && (
                   <div className="pagination-controls">
                      <button
@@ -258,15 +257,15 @@ export default function ManageShows() {
                            setSearchParams(newSearchParams);
                         }}
                         disabled={currentPage === 1}
-                        className="button primary small"
+                        className="primary small"
                      >
                         Previous
                      </button>
-                     
+
                      <span>
                         Page {currentPage} of {totalPages}
                      </span>
-                     
+
                      <button
                         onClick={() => {
                            const newSearchParams = new URLSearchParams(searchParams);
@@ -274,7 +273,7 @@ export default function ManageShows() {
                            setSearchParams(newSearchParams);
                         }}
                         disabled={currentPage === totalPages}
-                        className="button primary small"
+                        className="primary small"
                      >
                         Next
                      </button>
@@ -320,10 +319,9 @@ export default function ManageShows() {
                            required
                         />
                         <button
-                           type="submit"
                            name="_action"
                            value="editName"
-                           className="button primary small"
+                           className="primary small"
                         >
                            Rename
                         </button>
@@ -333,10 +331,9 @@ export default function ManageShows() {
                         <Form method="post">
                            <input type="hidden" name="showId" value={show.id} />
                            <button
-                              type="submit"
                               name="_action"
                               value="moveToWantToWatch"
-                              className="button warning small full-width"
+                              className="warning small full-width"
                            >
                               Move to Want to Watch
                            </button>

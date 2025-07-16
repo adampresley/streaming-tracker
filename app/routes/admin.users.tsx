@@ -75,7 +75,7 @@ function DeleteUserButton({ user, showCount, onDelete, variant = "link" }: { use
       <>
          <button
             onClick={() => setShowConfirmation(true)}
-            className={variant === "button" ? "button danger small" : "danger-link"}
+            className={variant === "button" ? "danger small" : "danger-link"}
          >
             Delete
          </button>
@@ -127,7 +127,6 @@ export default function AdminUsers() {
                   placeholder="Enter new user name"
                />
                <button
-                  type="submit"
                   name="_action"
                   value="createUser"
                   className="primary"
@@ -155,7 +154,6 @@ export default function AdminUsers() {
                               defaultValue={user.name}
                            />
                            <button
-                              type="submit"
                               name="_action"
                               value="updateUser"
                               className="primary"
@@ -180,10 +178,10 @@ export default function AdminUsers() {
                               >
                                  Edit
                               </button>
-                              <DeleteUserButton 
-                                 user={user} 
-                                 showCount={user.showCount} 
-                                 onDelete={() => handleDeleteUser(user.id)} 
+                              <DeleteUserButton
+                                 user={user}
+                                 showCount={user.showCount}
+                                 onDelete={() => handleDeleteUser(user.id)}
                               />
                            </div>
                         </>
@@ -207,17 +205,16 @@ export default function AdminUsers() {
                            />
                            <div className="user-card-actions">
                               <button
-                                 type="submit"
                                  name="_action"
                                  value="updateUser"
-                                 className="button primary small"
+                                 className="primary small"
                               >
                                  Save
                               </button>
                               <button
                                  type="button"
                                  onClick={() => setEditingUserId(null)}
-                                 className="button cancel small"
+                                 className="cancel small"
                               >
                                  Cancel
                               </button>
@@ -233,14 +230,14 @@ export default function AdminUsers() {
                         <div className="user-card-actions">
                            <button
                               onClick={() => setEditingUserId(user.id)}
-                              className="button secondary small"
+                              className="secondary small"
                            >
                               Edit
                            </button>
-                           <DeleteUserButton 
-                              user={user} 
-                              showCount={user.showCount} 
-                              onDelete={() => handleDeleteUser(user.id)} 
+                           <DeleteUserButton
+                              user={user}
+                              showCount={user.showCount}
+                              onDelete={() => handleDeleteUser(user.id)}
                               variant="button"
                            />
                         </div>

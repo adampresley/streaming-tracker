@@ -91,7 +91,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
    const formData = await request.formData();
    const action = formData.get("_action");
    const showId = Number(formData.get("showId"));
-   
+
    console.log("Action received:", action, "for showId:", showId);
 
    if (action === "completeSeason") {

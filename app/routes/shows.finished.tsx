@@ -7,12 +7,6 @@ import { db } from "~/db.server";
 import { shows, showsToUsers } from "../../drizzle/schema";
 import { eq, gt, and, desc } from "drizzle-orm";
 import { config } from "dotenv";
-import {
-   XCircleIcon,
-   CheckCircleIcon,
-   PlusCircleIcon,
-   MinusCircleIcon,
-} from "@heroicons/react/24/solid";
 import { requireAuth } from "~/auth.server";
 
 interface FinishedShowInfo {
@@ -202,11 +196,11 @@ export default function FinishedShows() {
          const intentInput = removeSeasonFormRef.querySelector('input[name="intent"]') as HTMLInputElement;
          const showIdInput = removeSeasonFormRef.querySelector('input[name="showId"]') as HTMLInputElement;
          const totalSeasonsInput = removeSeasonFormRef.querySelector('input[name="totalSeasons"]') as HTMLInputElement;
-         
+
          if (intentInput) intentInput.value = "removeSeason";
          if (showIdInput) showIdInput.value = showId.toString();
          if (totalSeasonsInput) totalSeasonsInput.value = totalSeasons.toString();
-         
+
          removeSeasonFormRef.submit();
       }
    };
@@ -245,9 +239,9 @@ export default function FinishedShows() {
                />
             </div>
             <div className="form-actions">
-               <button type="submit" className="primary">Search</button>
+               <button className="primary">Search</button>
                <Form method="get" className="inline">
-                  <button type="submit" className="cancel">Clear</button>
+                  <button className="cancel">Clear</button>
                </Form>
             </div>
          </Form>
@@ -297,7 +291,6 @@ export default function FinishedShows() {
                                     value={show.totalSeasons}
                                  />
                                  <button
-                                    type="submit"
                                     className="icon-button primary"
                                     aria-label="Add season"
                                     title="Add a season to the show"
@@ -306,9 +299,9 @@ export default function FinishedShows() {
                                  </button>
                               </Form>
 
-                              <RemoveSeasonButton 
-                                 show={show} 
-                                 onRemoveSeason={() => handleRemoveSeason(show.id, show.totalSeasons)} 
+                              <RemoveSeasonButton
+                                 show={show}
+                                 onRemoveSeason={() => handleRemoveSeason(show.id, show.totalSeasons)}
                               />
 
                               <Form
@@ -322,7 +315,6 @@ export default function FinishedShows() {
                                     value={show.cancelled.toString()}
                                  />
                                  <button
-                                    type="submit"
                                     className="icon-button warning"
                                     aria-label={
                                        show.cancelled ? "Un-cancel show" : "Cancel show"
@@ -354,7 +346,7 @@ export default function FinishedShows() {
                         )}
                      </h3>
                   </div>
-                  
+
                   <div className="finished-show-details">
                      <p><strong>Platform:</strong> {show.platformName}</p>
                      <p><strong>Seasons:</strong> {show.totalSeasons}</p>
@@ -374,7 +366,6 @@ export default function FinishedShows() {
                            value={show.totalSeasons}
                         />
                         <button
-                           type="submit"
                            className="button primary small"
                            aria-label="Add season"
                            title="Add a season to the show"
@@ -383,9 +374,9 @@ export default function FinishedShows() {
                         </button>
                      </Form>
 
-                     <RemoveSeasonButton 
-                        show={show} 
-                        onRemoveSeason={() => handleRemoveSeason(show.id, show.totalSeasons)} 
+                     <RemoveSeasonButton
+                        show={show}
+                        onRemoveSeason={() => handleRemoveSeason(show.id, show.totalSeasons)}
                      />
 
                      <Form
@@ -399,8 +390,7 @@ export default function FinishedShows() {
                            value={show.cancelled.toString()}
                         />
                         <button
-                           type="submit"
-                           className="button warning small"
+                           className="warning small"
                            aria-label={
                               show.cancelled ? "Un-cancel show" : "Cancel show"
                            }
