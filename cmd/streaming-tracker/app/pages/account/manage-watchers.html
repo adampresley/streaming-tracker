@@ -1,0 +1,21 @@
+{{if .IsHtmx}}
+{{template "no-layout" .}}
+{{else}}
+{{template "layouts/layout" .}}
+{{end}}
+{{define "title"}}Manage Watchers{{end}}
+{{define "content"}}
+
+{{if not .IsHtmx}}
+<h2>Manage Watchers</h2>
+{{end}}
+
+{{template "components/display-messages" .}}
+
+<section>
+   <p>Manage the people in your account who can watch shows with you. Account owners can update their display name, and you can add family members or friends who don't need their own login.</p>
+
+   {{template "components/watchers-list" .}}
+</section>
+
+{{end}}

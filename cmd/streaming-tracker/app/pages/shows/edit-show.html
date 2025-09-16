@@ -1,0 +1,56 @@
+{{template "layouts/layout" .}}
+{{define "title"}}Edit Show{{end}}
+{{define "content"}}
+
+<h2>Edit Show</h2>
+
+{{template "components/display-messages" .}}
+
+<form action="/shows/edit/{{.ShowID}}" method="POST" name="editShowForm" id="editShowForm">
+   <fieldset>
+      <label>
+         Show name
+         <input type="text" name="showName" id="showName" maxlength="128" minlength="1" required value="{{.ShowName}}">
+         <small>Enter the name of the show you want to track</small>
+      </label>
+
+      <label>
+         Total seasons
+         <input type="number" name="totalSeasons" id="totalSeasons" min="1" max="255" required value="{{.TotalSeasons}}"
+            {{if .ShowIsFinished}}disabled{{end}}>
+         <small>Enter the total number of seasons for this show</small>
+      </label>
+
+      <label>
+         Platform
+         <select name="platform" id="platform" required>
+            <option value="0">Select a platform</option>
+
+            {{range .Platforms}}
+            <option value="{{.ID.ID}}" {{if eq .ID.ID $.PlatformID}} selected{{end}}>{{.Name }}</option>
+            {{end}}
+         </select>
+         <small>Choose the streaming platform where this show is available</small>
+      </label>
+   </fieldset>
+
+   <fieldset id="watchersFieldset">
+      <legend>Who wants to watch?</legend>
+
+      {{range .Watchers}}
+      <label>
+         <input type="checkbox" name="watchers" value="{{.Watcher.ID.ID}}" {{if .IsSelected}}checked{{end}} {{if or
+            $.ShowIsFinished $.ShowIsCancelled}}disabled{{end}} />
+         {{.Watcher.Name}}
+      </label>
+      {{end}}
+      <small id="watchersHelp">Select at least one person who wants to watch this show</small>
+   </fieldset>
+
+   <fieldset class="grid">
+      <input type="submit" id="submit" value="Update Show" />
+      <button type="button" id="btnCancel" class="secondary">Cancel</button>
+   </fieldset>
+</form>
+
+{{end}}

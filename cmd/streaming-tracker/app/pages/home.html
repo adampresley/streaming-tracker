@@ -1,0 +1,13 @@
+{{template "layouts/layout" .}}
+{{define "title"}}Home{{end}}
+{{define "content"}}
+
+<h2>Greetings!</h2>
+
+{{template "components/display-messages" .}}
+
+<div id="dashboard-shows">
+   {{template "components/dashboard-shows" .}}
+</div>
+
+{{end}}

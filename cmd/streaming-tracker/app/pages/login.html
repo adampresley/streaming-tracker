@@ -1,0 +1,52 @@
+{{if .IsHtmx}}
+{{template "no-layout" .}}
+{{else}}
+{{template "layouts/login-layout" .}}
+{{end}}
+
+{{define "title"}}Log In{{end}}
+{{define "content"}}
+
+<header class="call-to-action">
+   <h1 alt="Welcome to Streaming Tracker">
+      <picture>
+         <source srcset="/static/images/logo/streaming-tracker-720.webp" media="(min-width: 768px)">
+         <source srcset="/static/images/logo/streaming-tracker-300.webp" media="(min-width: 480px)">
+         <img src="/static/images/logo/streaming-tracker-125.webp" alt="Streaming Tracker Logo">
+      </picture>
+   </h1>
+
+   <h2>Welcome to Streaming Tracker</h2>
+
+   <p>Track your favorite shows across all streaming platforms</p>
+   <p>Don't have an account yet? <a href="/account/sign-up">Sign up here</a> to get started!</p>
+</header>
+
+<h2>Log In</h2>
+
+{{template "components/display-messages" .}}
+
+<p>
+   Already have an account? Log in using your email address and password
+   below. If you have lost your password, <a href="/account/forgot-password">reset it here</a>.
+</p>
+
+<form name="loginForm" id="loginForm" method="POST" action="/login">
+   <fieldset>
+      <label>
+         Email Address
+         <input name="email" id="email" type="email" maxlength="255" value="{{.Email}}" autocomplete="email" required />
+         <small id="invalid-email">The email address for your account</small>
+      </label>
+
+      <label>
+         Password
+         <input name="password" id="password" type="password" minlength="5" maxlength="50" required />
+         <small id="invalid-password">Your account password</small>
+      </label>
+   </fieldset>
+
+   <input id="submit" type="submit" value="Log In" />
+</form>
+
+{{end}}

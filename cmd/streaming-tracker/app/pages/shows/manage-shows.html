@@ -1,0 +1,96 @@
+{{if .IsHtmx}}
+{{template "no-layout" .}}
+{{else}}
+{{template "layouts/layout" .}}
+{{end}}
+{{define "title"}}Home{{end}}
+{{define "content"}}
+
+{{if not .IsHtmx}}
+<h2>Manage Shows</h2>
+{{end}}
+
+{{template "components/display-messages" .}}
+
+{{if not .IsHtmx}}
+<form id="searchForm" hx-get="/shows/manage" hx-target="#searchResults" hx-swap="innerHTML"
+   hx-trigger="input delay:500ms from:#showName, change from:#platform, click[event.target.matches('#btnReset')]"
+   hx-push-url="true">
+   <fieldset class="grid">
+      <input type="text" id="showName" name="showName" placeholder="Search for a show..." aria-label="Show"
+         value="{{.ShowName}}" />
+      <select id="platform" name="platform" aria-label="Platform">
+         <option value="0">Filter by platform</option>
+         {{range .Platforms}}
+         <option value="{{.ID.ID}}" {{if eq $.Platform .ID.ID}} selected="selected" {{end}}>{{.Name }}</option>
+         {{end}}
+      </select>
+
+      <button id="btnReset" type="button" class="secondary">Reset</button>
+   </fieldset>
+</form>
+
+<section id="searchResults" class="overflow-auto">
+   {{end}}
+
+   <table>
+      <thead>
+         <tr>
+            <th scope="col">Show</th>
+            <th scope="col">Platform</th>
+            <th scope="col">Seasons</th>
+            <th scope="col">Watchers</th>
+            <th scope="col">Finished</th>
+            <th scope="col" style="width: 190px">Actions</th>
+         </tr>
+      </thead>
+
+      <tbody>
+         {{range .Shows}}
+         <tr>
+            <th scope="row">{{.ShowName}}{{if not (eq .DateCancelled "")}} <small><em>(cancelled)</em></small>{{end}}
+            </th>
+            <td>{{.PlatformName}}</td>
+            <td>{{.NumSeasons}}</td>
+            <td>{{.WatcherName}}</td>
+            <td>{{.FinishedAt}}</td>
+            <td>
+               {{if not .Cancelled}}
+               <a href="/shows/edit/{{.ShowID}}" title="Edit {{.ShowName}}" alt="Edit {{.ShowName}}" role="button">
+                  <span class="icon edit"></span>
+               </a>
+
+               {{if not (eq .FinishedAt "")}}
+               <a href="#" title="Add season to {{.ShowName}}" alt="Add season to {{.ShowName}}" role="button"
+                  hx-post="/shows/add-season?id={{.ShowID}}" hx-target="#searchResults" hx-swap="innerHTML"
+                  hx-include="#searchForm">
+                  <span class="icon plus"></span>
+               </a>
+               {{end}}
+
+               <a href="#" title="Cancel {{.ShowName}}" alt="Cancel {{.ShowName}}" role="button"
+                  hx-post="/shows/cancel?id={{.ShowID}}" hx-target="#searchResults" hx-swap="innerHTML"
+                  hx-include="#searchForm"
+                  hx-confirm="Are you sure you want to cancel '{{.ShowName}}'? This action cannot be undone.">
+                  <span class="icon cancel"></span>
+               </a>
+
+               {{if eq .CurrentSeason 0}}
+               <a href="#" title="Delete {{.ShowName}}" alt="Delete {{.ShowName}}" role="button"
+                  hx-delete="/shows/delete?id={{.ShowID}}" hx-confirm="Are you sure you want to delete '{{.ShowName}}'?"
+                  hx-target="closest tr" hx-swap="delete">
+                  <span class="icon delete"></span>
+               </a>
+               {{end}}
+               {{end}}
+            </td>
+         </tr>
+         {{end}}
+      </tbody>
+   </table>
+
+   {{if not .IsHtmx}}
+</section>
+{{end}}
+
+{{end}}

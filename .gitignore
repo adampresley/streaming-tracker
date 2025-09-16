@@ -1,7 +1,4 @@
-node_modules
-
-/.cache
-/build
+tmp
 .env
-db/streamingtracker.db
-db/.seeded
+.DS_Store
+cmd/streaming-tracker/streaming-tracker

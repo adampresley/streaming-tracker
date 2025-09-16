@@ -1,12 +1,19 @@
 services:
-  streamingtracker:
-    container_name: streamingtracker
-    build:
-      dockerfile: Dockerfile
+  postgres:
+    image: postgres:17.5
+    container_name: streaming-tracker-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
     env_file:
       - ./.env
     volumes:
-      - ./db:/app/db
-    ports:
-      - 127.0.0.1:3000:3000
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
+volumes:
+  postgres_data:

@@ -1,0 +1,50 @@
+{{define "components/watchers-list"}}
+<div id="watchers-list">
+   {{range .Watchers}}
+   <article class="watcher-item">
+      <header>
+         <div class="watcher-info">
+            {{if .IsOwner}}
+            <h4>{{.Name}} <small>(Account Owner)</small></h4>
+            {{else}}
+            <h4>{{.Name}}</h4>
+            {{end}}
+
+            {{if .HasUserAccount}}
+            <small>{{.UserEmail}}</small>
+            {{else}}
+            <small>Manual watcher (no user account)</small>
+            {{end}}
+         </div>
+      </header>
+
+      {{if .CanEditName}}
+      <div class="watcher-actions">
+         <form hx-post="/account/watchers/update-name" hx-target="#watchers-list" hx-swap="innerHTML">
+            <input type="hidden" name="watcherID" value="{{.ID}}">
+            <div class="grid">
+               <input type="text" name="watcherName" value="{{.Name}}"
+                  placeholder="{{if .IsCurrentUser}}Your display name{{else}}Watcher name{{end}}" required>
+               <button type="submit" class="tertiary">Update Name</button>
+            </div>
+         </form>
+      </div>
+      {{end}}
+   </article>
+   {{end}}
+
+   <article class="add-watcher">
+      <header>
+         <h4>Add New Watcher</h4>
+         <small>Add someone to your account who doesn't need their own login</small>
+      </header>
+
+      <form hx-post="/account/watchers/add" hx-target="#watchers-list" hx-swap="innerHTML">
+         <div class="grid">
+            <input type="text" name="watcherName" placeholder="Watcher name" required>
+            <button type="submit">Add Watcher</button>
+         </div>
+      </form>
+   </article>
+</div>
+{{end}}

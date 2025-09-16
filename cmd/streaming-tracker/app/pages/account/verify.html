@@ -1,0 +1,30 @@
+{{if .IsHtmx}}
+{{template "no-layout" .}}
+{{else}}
+{{template "layouts/login-layout" .}}
+{{end}}
+
+{{define "title"}}Verify Account{{end}}
+{{define "content"}}
+
+<h1>Verify Your Account</h1>
+
+<p>
+   Please enter the code you received in your email to verify your account.
+</p>
+
+{{template "components/display-messages" .}}
+
+<form name="verifyForm" id="verifyForm" method="POST" action="/account/verify">
+   <fieldset>
+      <label>
+         Activation Code
+         <input name="code" id="code" type="text" maxlength="6" required />
+      </label>
+   </fieldset>
+
+   <input name="accountCode" id="accountCode" type="hidden" value="{{.JoinToken}}" />
+   <input id="submit" type="submit" value="Verify" />
+</form>
+
+{{end}}

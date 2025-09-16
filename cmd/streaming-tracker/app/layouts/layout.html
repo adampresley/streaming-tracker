@@ -1,0 +1,71 @@
+{{- define "layouts/layout"}}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8" />
+   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+   <meta name="color-scheme" content="light dark" />
+   <title>{{template "title" .}} - streaming-tracker</title>
+   <link type="text/css" rel="stylesheet" media="screen" href="/static/css/pico.min.css" />
+   <link type="text/css" rel="stylesheet" media="screen" href="/static/css/styles.css" />
+   <link type="text/css" rel="stylesheet" media="screen" href="/static/css/spinner.min.css" />
+   <link type="text/css" rel="stylesheet" media="screen" href="/static/css/icons.css" />
+   {{stylesheetIncludes "Stylesheets" .}}
+
+   <script src="/static/js/htmx.min.js"></script>
+</head>
+
+<body>
+   <!-- Mobile menu overlay -->
+   <div class="mobile-menu-overlay"></div>
+
+   <header class="grid top-header">
+      <nav>
+         <ul>
+            <li>
+               <h1>
+                  <picture>
+                     <source srcset="/static/images/logo/streaming-tracker-125.webp" type="image/webp">
+                     <source srcset="/static/images/logo/streaming-tracker.png" type="image/png">
+                     <img src="/static/images/logo/streaming-tracker.png" alt="Streaming Tracker Logo">
+                  </picture>
+
+                  <a href="/">Streaming Tracker</a>
+               </h1>
+            </li>
+         </ul>
+
+         <!-- Hamburger menu button (hidden on desktop) -->
+         <button class="hamburger-menu" aria-label="Toggle navigation menu" aria-expanded="false">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+         </button>
+
+         <!-- Navigation menu -->
+         <ul class="nav-menu">
+            <li><a href="/">Dashboard</a></li>
+            <li><a href="/shows/add">Add Show</a></li>
+            <li><a href="/shows/manage">Manage Shows</a></li>
+            <li><a href="/account/manage-watchers">Manage Watchers</a></li>
+         </ul>
+      </nav>
+   </header>
+   <!-- END NAV -->
+
+   <main id="mainContent" class="container-fluid">
+      {{template "content" .}}
+   </main>
+
+   <footer id="page-footer">
+      <p>&copy; 2025 Adam Presley</p>
+   </footer>
+
+   <script type="module" src="/static/js/spinner-middleware.js"></script>
+   <script src="/static/js/hamburger-menu.js"></script>
+   {{javascriptIncludes "JavascriptIncludes" .}}
+</body>
+
+</html>
+{{end}}

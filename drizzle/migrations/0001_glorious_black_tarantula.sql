@@ -1,1 +1,0 @@
-ALTER TABLE `shows` ADD `cancelled` integer DEFAULT false NOT NULL;

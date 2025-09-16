@@ -1,0 +1,56 @@
+{{if .IsHtmx}}
+{{template "no-layout" .}}
+{{else}}
+{{template "layouts/login-layout" .}}
+{{end}}
+
+{{define "title"}}Sign Up{{end}}
+{{define "content"}}
+
+<header class="call-to-action">
+   <h1 alt="Welcome to Streaming Tracker">
+      <picture>
+         <source srcset="/static/images/logo/streaming-tracker-720.webp" media="(min-width: 768px)">
+         <source srcset="/static/images/logo/streaming-tracker-300.webp" media="(min-width: 480px)">
+         <img src="/static/images/logo/streaming-tracker-125.webp" alt="Streaming Tracker Logo">
+      </picture>
+   </h1>
+
+   <h2>Sign Up</h2>
+
+   <p>
+      Ready to start watching your favorite shows? Create an account and
+      start tracking what you watch across all streaming platforms
+      like a pro!
+   </p>
+</header>
+
+{{template "components/display-messages" .}}
+
+
+<form name="signupForm" id="signupForm" method="POST" action="/account/sign-up">
+   <fieldset>
+      <label>
+         Email Address
+         <input name="email" id="email" type="email" maxlength="255" value="{{.Email}}" autocomplete="email" required />
+         <small id="invalid-email">The email address for your account. You will use this to log in.</small>
+      </label>
+
+      <label>
+         Password
+         <input name="password" id="password" type="password" minlength="5" maxlength="50" required />
+         <small id="invalid-password">Your account password must be at least 5 characters long.</small>
+      </label>
+
+      <label>
+         Account Code
+         <input name="accountCode" id="accountCode" type="text" maxlength="255" />
+         <small>If you got an activation code in your email, or from a friend or family member, enter it here. This is
+            optional.</small>
+      </label>
+   </fieldset>
+
+   <input id="submit" type="submit" value="Sign Up" />
+</form>
+
+{{end}}

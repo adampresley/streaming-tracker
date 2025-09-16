@@ -1,0 +1,259 @@
+:root {
+   --error-background-color: var(--pico-form-element-invalid-focus-color);
+   --error-text-color: white;
+   --success-background-color: var(--pico-form-element-valid-focus-color);
+   --success-text-color: white;
+   --pico-form-element-spacing-vertical: 0.55rem;
+   --tertiary-background: rgb(216, 208, 241);
+}
+
+/* My overrides */
+body>footer,
+body>header {
+   padding: 1rem;
+}
+
+/* Header and navigation styles */
+body {
+   header {
+      nav {
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         position: relative;
+
+         ul {
+            li {
+               h1 {
+                  img {
+                     max-height: 3rem;
+                  }
+               }
+            }
+         }
+
+         /* Navigation menu styles */
+         .nav-menu {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 1rem;
+
+            li {
+               margin: 0;
+            }
+
+            a {
+               text-decoration: none;
+               padding: 0.5rem 1rem;
+               border-radius: 0.25rem;
+               transition: background-color 0.2s ease;
+
+               &:hover {
+                  background-color: var(--pico-secondary-background);
+               }
+            }
+         }
+
+         /* Hamburger menu button (hidden by default) */
+         .hamburger-menu {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            flex-direction: column;
+            justify-content: space-around;
+            width: 2rem;
+            height: 2rem;
+            position: relative;
+            z-index: 1001;
+
+            .hamburger-line {
+               display: block;
+               height: 3px;
+               width: 100%;
+               background-color: var(--pico-contrast);
+               border-radius: 2px;
+               transition: all 0.3s ease;
+            }
+
+            &.active {
+               .hamburger-line:nth-child(1) {
+                  transform: rotate(45deg) translate(5px, 5px);
+               }
+
+               .hamburger-line:nth-child(2) {
+                  opacity: 0;
+               }
+
+               .hamburger-line:nth-child(3) {
+                  transform: rotate(-45deg) translate(7px, -6px);
+               }
+            }
+         }
+      }
+   }
+}
+
+a {
+   cursor: pointer;
+}
+
+:is(button, [type=submit], [type=button], [role=button]).tertiary {
+   background-color: var(--tertiary-background);
+   color: var(--pico-contrast-inverse);
+   border-color: var(--tertiary-background);
+}
+
+article.error {
+   background-color: var(--error-background-color);
+   color: var(--error-text-color);
+}
+
+article.success {
+   background-color: var(--success-background-color);
+   color: var(--success-text-color);
+}
+
+article.warning {
+   background-color: #fff8e1;
+   color: #ff6f00;
+}
+
+/* Dashboard cards */
+.shows {
+   display: flex;
+   gap: 2rem;
+   flex-wrap: wrap;
+
+   article {
+      &.show {
+         min-width: 18rem;
+         max-width: 25rem;
+
+         header {
+            margin-bottom: 0.1rem;
+
+            h5 {
+               margin-bottom: 0;
+            }
+         }
+      }
+   }
+}
+
+/*
+Action buttons in tables
+*/
+table {
+   tbody {
+      tr {
+         td {
+            a[role="button"] {
+               padding: 0.5rem;
+            }
+         }
+      }
+   }
+}
+
+.call-to-action {
+   margin-bottom: 2rem;
+   padding: 2rem;
+   border: 1px solid var(--pico-accordion-border-color);
+   border-radius: 10px;
+   background-color: var(--pico-card-background-color);
+
+   img {
+      max-height: 5rem;
+      margin-bottom: 1rem;
+   }
+}
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+   body {
+      header {
+         nav {
+            .hamburger-menu {
+               display: flex;
+            }
+
+            .nav-menu {
+               position: fixed;
+               top: 0;
+               right: -100%;
+               width: 70%;
+               height: 100vh;
+               background-color: var(--pico-background-color);
+               flex-direction: column;
+               justify-content: flex-start;
+               align-items: stretch;
+               padding: 5rem 2rem 2rem;
+               transition: right 0.3s ease;
+               box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+               z-index: 1000;
+
+               &.active {
+                  right: 0;
+               }
+
+               li {
+                  margin: 0.5rem 0;
+               }
+
+               a {
+                  display: block;
+                  padding: 1rem;
+                  text-align: center;
+                  border-bottom: 1px solid var(--pico-border-color);
+
+                  &:hover {
+                     background-color: var(--pico-secondary-background);
+                  }
+               }
+            }
+         }
+      }
+   }
+
+   /* Dashboard cards - reduce gap on mobile */
+   .shows {
+      gap: 0.5rem;
+   }
+
+   /* Overlay for mobile menu */
+   .mobile-menu-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+
+      &.active {
+         opacity: 1;
+         visibility: visible;
+      }
+   }
+}
+
+/* Small mobile responsive styles */
+@media (max-width: 680px) {
+
+   /* Dashboard cards - full width on small screens */
+   .shows {
+      article {
+         &.show {
+            min-width: 100%;
+            max-width: 100%;
+         }
+      }
+   }
+}
