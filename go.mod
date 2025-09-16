@@ -3,7 +3,7 @@ module github.com/adampresley/streaming-tracker
 go 1.24.5
 
 require (
-	github.com/adampresley/adamgokit v1.15.1
+	github.com/adampresley/adamgokit v1.16.0
 	github.com/adampresley/configinator v1.1.0
 	github.com/georgysavva/scany/v2 v2.1.4
 	github.com/jackc/pgx/v5 v5.7.5
@@ -54,5 +54,3 @@ require (
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-replace github.com/adampresley/adamgokit => /Users/adampresley/code/adamgokit
