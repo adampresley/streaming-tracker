@@ -1,6 +1,6 @@
 module github.com/adampresley/streaming-tracker
 
-go 1.24.5
+go 1.25.1
 
 require (
 	github.com/adampresley/adamgokit v1.16.0
