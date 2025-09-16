@@ -175,7 +175,7 @@ func (c IdentityController) AccountSignUpAction(w http.ResponseWriter, r *http.R
 		user.ActivationCode,
 	)
 
-	c.emailService.Send(email.Mail{
+	err = c.emailService.Send(email.Mail{
 		Body:       mailBody,
 		BodyIsHtml: true,
 		From:       email.EmailAddress{Email: c.config.EmailFrom},
@@ -186,6 +186,10 @@ func (c IdentityController) AccountSignUpAction(w http.ResponseWriter, r *http.R
 			},
 		},
 	})
+
+	if err != nil {
+		slog.Error("Failed to send email verification code", "error", err)
+	}
 
 	/*
 	 * Redirect to success page
