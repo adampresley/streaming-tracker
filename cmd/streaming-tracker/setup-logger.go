@@ -26,7 +26,7 @@ func setupLogger(config *configuration.Config, version string) {
 		level = slog.LevelInfo
 	}
 
-	h := slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{
+	h := slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
 		Level: level,
 	}).WithAttrs([]slog.Attr{
 		slog.String("version", version),
