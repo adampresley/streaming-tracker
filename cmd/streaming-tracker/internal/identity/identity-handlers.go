@@ -182,7 +182,7 @@ func (c IdentityController) AccountSignUpAction(w http.ResponseWriter, r *http.R
 		Subject:    "Welcome to Streaming Tracker! Activate Your Account",
 		To: []email.EmailAddress{
 			{
-				Email: user.Email,
+				Email: fmt.Sprintf("%s <%s>", user.Email, user.Email),
 			},
 		},
 	})
