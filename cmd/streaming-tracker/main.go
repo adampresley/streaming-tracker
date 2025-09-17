@@ -241,6 +241,7 @@ func main() {
 		{Path: "POST /shows/finish-season", HandlerFunc: showController.FinishSeasonAction},
 		{Path: "POST /shows/add-season", HandlerFunc: showController.AddSeasonAction},
 		{Path: "POST /shows/cancel", HandlerFunc: showController.CancelShowAction},
+		{Path: "POST /shows/back-to-want-to-watch", HandlerFunc: showController.BackToWantToWatchAction},
 	}
 
 	routerConfig := mux.RouterConfig{

@@ -28,6 +28,7 @@ type ShowHandlers interface {
 	AddSeasonAction(w http.ResponseWriter, r *http.Request)
 	AddShowPage(w http.ResponseWriter, r *http.Request)
 	AddShowAction(w http.ResponseWriter, r *http.Request)
+	BackToWantToWatchAction(w http.ResponseWriter, r *http.Request)
 	CancelShowAction(w http.ResponseWriter, r *http.Request)
 	DeleteShowAction(w http.ResponseWriter, r *http.Request)
 	EditShowPage(w http.ResponseWriter, r *http.Request)
@@ -597,6 +598,47 @@ func (c ShowController) StartWatchingAction(w http.ResponseWriter, r *http.Reque
 	// Get updated shows data and return the shows section for HTMX
 	if showsData, err = c.showService.GetActiveShowsGroupedByWatchersAndStatus(session.AccountID); err != nil {
 		slog.Error("error fetching shows after starting watching", "error", err)
+		http.Error(w, "There was an unexpected error loading the updated shows. Please try again later.", http.StatusInternalServerError)
+		return
+	}
+
+	viewData := viewmodels.Home{
+		BaseViewModel: viewmodels.BaseViewModel{
+			IsHtmx: true,
+		},
+		Shows: viewmodels.NewDashboardShowsFromDbModel(showsData),
+	}
+
+	c.renderer.Render("components/dashboard-shows", viewData, w)
+}
+
+/*
+POST /shows/back-to-want-to-watch?id={id}
+*/
+func (c ShowController) BackToWantToWatchAction(w http.ResponseWriter, r *http.Request) {
+	var (
+		err       error
+		showsData *orderedmap.OrderedMap[string, *orderedmap.OrderedMap[string, []models.ShowGroupedByStatusAndWatchers]]
+	)
+
+	session := c.GetSession(r)
+	showID := httphelpers.GetFromRequest[int](r, "id")
+
+	if err = c.showService.BackToWantToWatch(session.AccountID, showID); err != nil {
+		if err == shows.ErrShowNotFound {
+			slog.Error("attempt to move non-existent show back to want to watch", "showID", showID, "accountID", session.AccountID)
+			http.Error(w, "Show not found", http.StatusNotFound)
+			return
+		}
+
+		slog.Error("error moving show back to want to watch", "error", err, "showID", showID, "accountID", session.AccountID)
+		http.Error(w, "There was an unexpected error trying to move the show back to want to watch. Please try again later.", http.StatusInternalServerError)
+		return
+	}
+
+	// Get updated shows data and return the shows section for HTMX
+	if showsData, err = c.showService.GetActiveShowsGroupedByWatchersAndStatus(session.AccountID); err != nil {
+		slog.Error("error fetching shows after moving back to want to watch", "error", err)
 		http.Error(w, "There was an unexpected error loading the updated shows. Please try again later.", http.StatusInternalServerError)
 		return
 	}

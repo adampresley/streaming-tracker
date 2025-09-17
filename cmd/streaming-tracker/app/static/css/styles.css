@@ -3,7 +3,8 @@
    --error-text-color: white;
    --success-background-color: var(--pico-form-element-valid-focus-color);
    --success-text-color: white;
-   --pico-form-element-spacing-vertical: 0.55rem;
+   --pico-form-element-spacing-vertical: 0.45rem;
+   --pico-form-element-spacing-horizontal: 0.35rem;
    --tertiary-background: rgb(216, 208, 241);
 }
 
@@ -141,6 +142,20 @@ article.warning {
                margin-bottom: 0;
             }
          }
+
+         footer {
+            display: flex;
+            gap: 0.5rem;
+
+            details.dropdown {
+               margin: 0;
+
+               summary {
+                  padding-left: var(--pico-block-spacing-horizontal);
+                  padding-right: var(--pico-block-spacing-horizontal);
+               }
+            }
+         }
       }
    }
 }
@@ -254,6 +269,10 @@ table {
          &.show {
             min-width: 100%;
             max-width: 100%;
+
+            footer {
+               flex-direction: column;
+            }
          }
       }
    }

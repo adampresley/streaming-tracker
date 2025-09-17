@@ -39,6 +39,15 @@
                Finish Season
                {{end}}
             </button>
+
+            <details class="dropdown">
+               <summary role="button" class="secondary">
+                  More...
+               </summary>
+               <ul>
+                  <li><a href="#" hx-post="/shows/back-to-want-to-watch?id={{.ShowID}}" hx-target="#dashboard-shows" hx-swap="innerHTML">Back to Want to Watch</a></li>
+               </ul>
+            </details>
             {{end}}
          </footer>
       </article>

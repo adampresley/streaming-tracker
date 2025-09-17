@@ -176,10 +176,10 @@ func (s ShowService) BackToWantToWatch(accountID, showID int) error {
 	ctx, cancel := s.GetContext()
 	defer cancel()
 
-	// Update the show status to "Want to Watch" (watch_status_id = 1) and reset current season to 0
+	// Update the show status to "Want to Watch" (watch_status_id = 1)
 	updateQuery := `
-UPDATE show_status 
-SET watch_status_id = 1, current_season = 0
+UPDATE show_status
+SET watch_status_id = 1
 WHERE show_id = $1
 	`
 
