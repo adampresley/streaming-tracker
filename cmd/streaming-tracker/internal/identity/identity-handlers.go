@@ -27,6 +27,7 @@ type IdentityHandlers interface {
 	AccountVerifyAction(w http.ResponseWriter, r *http.Request)
 	LoginPage(w http.ResponseWriter, r *http.Request)
 	LoginAction(w http.ResponseWriter, r *http.Request)
+	LogoutAction(w http.ResponseWriter, r *http.Request)
 }
 
 type IdentityControllerConfig struct {
@@ -505,4 +506,9 @@ func (c IdentityController) AccountVerifyAction(w http.ResponseWriter, r *http.R
 	 * Success! Redirect to login page with a success message
 	 */
 	http.Redirect(w, r, "/login?message=Account verified successfully! You can now log in.", http.StatusSeeOther)
+}
+
+func (c IdentityController) LogoutAction(w http.ResponseWriter, r *http.Request) {
+	_ = c.auth.DestroySession(w, r)
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }

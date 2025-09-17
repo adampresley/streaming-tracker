@@ -222,6 +222,7 @@ func main() {
 		{Path: "GET /error", HandlerFunc: homeController.ErrorPage},
 		{Path: "GET /login", HandlerFunc: identityController.LoginPage},
 		{Path: "POST /login", HandlerFunc: identityController.LoginAction},
+		{Path: "GET /logout", HandlerFunc: identityController.LogoutAction},
 		{Path: "GET /account/sign-up", HandlerFunc: identityController.AccountSignUpPage},
 		{Path: "POST /account/sign-up", HandlerFunc: identityController.AccountSignUpAction},
 		{Path: "GET /account/sign-up-success", HandlerFunc: identityController.AccountSignUpSuccessPage},
