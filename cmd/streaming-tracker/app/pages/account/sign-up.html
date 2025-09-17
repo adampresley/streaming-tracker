@@ -16,7 +16,7 @@
       </picture>
    </h1>
 
-   <h2>Sign Up</h2>
+   <h2>Sign Up - Coming Soon!</h2>
 
    <p>
       Ready to start watching your favorite shows? Create an account and
@@ -28,29 +28,29 @@
 {{template "components/display-messages" .}}
 
 
-<form name="signupForm" id="signupForm" method="POST" action="/account/sign-up">
-   <fieldset>
-      <label>
-         Email Address
-         <input name="email" id="email" type="email" maxlength="255" value="{{.Email}}" autocomplete="email" required />
-         <small id="invalid-email">The email address for your account. You will use this to log in.</small>
-      </label>
-
-      <label>
-         Password
-         <input name="password" id="password" type="password" minlength="5" maxlength="50" required />
-         <small id="invalid-password">Your account password must be at least 5 characters long.</small>
-      </label>
-
-      <label>
-         Account Code
-         <input name="accountCode" id="accountCode" type="text" maxlength="255" />
-         <small>If you got an activation code in your email, or from a friend or family member, enter it here. This is
-            optional.</small>
-      </label>
-   </fieldset>
-
-   <input id="submit" type="submit" value="Sign Up" />
-</form>
+<!-- <form name="signupForm" id="signupForm" method="POST" action="/account/sign-up"> -->
+<!--    <fieldset> -->
+<!--       <label> -->
+<!--          Email Address -->
+<!--          <input name="email" id="email" type="email" maxlength="255" value="{{.Email}}" autocomplete="email" required /> -->
+<!--          <small id="invalid-email">The email address for your account. You will use this to log in.</small> -->
+<!--       </label> -->
+<!---->
+<!--       <label> -->
+<!--          Password -->
+<!--          <input name="password" id="password" type="password" minlength="5" maxlength="50" required /> -->
+<!--          <small id="invalid-password">Your account password must be at least 5 characters long.</small> -->
+<!--       </label> -->
+<!---->
+<!--       <label> -->
+<!--          Account Code -->
+<!--          <input name="accountCode" id="accountCode" type="text" maxlength="255" /> -->
+<!--          <small>If you got an activation code in your email, or from a friend or family member, enter it here. This is -->
+<!--             optional.</small> -->
+<!--       </label> -->
+<!--    </fieldset> -->
+<!---->
+<!--    <input id="submit" type="submit" value="Sign Up" /> -->
+<!-- </form> -->
 
 {{end}}

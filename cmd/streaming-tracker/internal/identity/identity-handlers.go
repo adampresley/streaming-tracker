@@ -89,6 +89,9 @@ func (c IdentityController) AccountSignUpAction(w http.ResponseWriter, r *http.R
 		user *models.User
 	)
 
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
+	return
+
 	pageName := "pages/account/sign-up"
 
 	viewData := viewmodels.AccountSignUp{
