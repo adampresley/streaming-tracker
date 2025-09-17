@@ -12,6 +12,21 @@
 
 {{template "components/display-messages" .}}
 
+<!-- Confirmation Modal -->
+<dialog id="confirmationModal">
+   <article>
+      <header>
+         <button aria-label="Close" rel="prev" id="closeModalBtn"></button>
+         <p><strong>Confirm Action</strong></p>
+      </header>
+      <p id="confirmationMessage"></p>
+      <footer>
+         <button class="secondary" id="confirmCancel">Cancel</button>
+         <button id="confirmOk">Confirm</button>
+      </footer>
+   </article>
+</dialog>
+
 {{if not .IsHtmx}}
 <form id="searchForm" hx-get="/shows/manage" hx-target="#searchResults" hx-swap="innerHTML"
    hx-trigger="input delay:500ms from:#showName, change from:#platform, click[event.target.matches('#btnReset')]"
@@ -27,6 +42,7 @@
       </select>
 
       <button id="btnReset" type="button" class="secondary">Reset</button>
+      <input type="hidden" id="page" name="page" value="{{.Page}}" />
    </fieldset>
 </form>
 
@@ -70,15 +86,15 @@
 
                <a href="#" title="Cancel {{.ShowName}}" alt="Cancel {{.ShowName}}" role="button"
                   hx-post="/shows/cancel?id={{.ShowID}}" hx-target="#searchResults" hx-swap="innerHTML"
-                  hx-include="#searchForm"
-                  hx-confirm="Are you sure you want to cancel '{{.ShowName}}'? This action cannot be undone.">
+                  hx-include="#searchForm" data-custom-confirm="true"
+                  data-confirm-message="Are you sure you want to cancel '{{.ShowName}}'? This action cannot be undone.">
                   <span class="icon cancel"></span>
                </a>
 
                {{if eq .CurrentSeason 0}}
                <a href="#" title="Delete {{.ShowName}}" alt="Delete {{.ShowName}}" role="button"
-                  hx-delete="/shows/delete?id={{.ShowID}}" hx-confirm="Are you sure you want to delete '{{.ShowName}}'?"
-                  hx-target="closest tr" hx-swap="delete">
+                  hx-delete="/shows/delete?id={{.ShowID}}" hx-target="closest tr" hx-swap="delete"
+                  data-custom-confirm="true" data-confirm-message="Are you sure you want to delete '{{.ShowName}}'?">
                   <span class="icon delete"></span>
                </a>
                {{end}}
@@ -88,6 +104,36 @@
          {{end}}
       </tbody>
    </table>
+
+   <section>
+      <div>
+         <small>
+            {{.Paging.TotalItems}} total shows
+            (Page {{.Paging.Page}} of {{.Paging.TotalPages}})
+         </small>
+      </div>
+
+      <div>
+         {{if .Paging.HasPrevious}}
+         <a href="#" role="button" class="secondary" hx-get="/shows/manage" hx-target="#searchResults"
+            hx-swap="innerHTML" hx-include="#searchForm" hx-vals='{"page": {{.Paging.PreviousPage}}}'
+            hx-push-url="true">
+            Previous
+         </a>
+         {{else}}
+         <button class="secondary" disabled>Previous</button>
+         {{end}}
+
+         {{if .Paging.HasNext}}
+         <a href="#" role="button" class="secondary" hx-get="/shows/manage" hx-target="#searchResults"
+            hx-swap="innerHTML" hx-include="#searchForm" hx-vals='{"page": {{.Paging.NextPage}}}' hx-push-url="true">
+            Next
+         </a>
+         {{else}}
+         <button class="secondary" disabled>Next</button>
+         {{end}}
+      </div>
+   </section>
 
    {{if not .IsHtmx}}
 </section>
