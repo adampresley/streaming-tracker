@@ -3,7 +3,7 @@ module github.com/adampresley/streaming-tracker
 go 1.25.1
 
 require (
-	github.com/adampresley/adamgokit v1.16.1
+	github.com/adampresley/adamgokit v1.16.2
 	github.com/adampresley/configinator v1.1.0
 	github.com/georgysavva/scany/v2 v2.1.4
 	github.com/jackc/pgx/v5 v5.7.5
