@@ -109,19 +109,33 @@ a {
    border-color: var(--tertiary-background);
 }
 
-article.error {
-   background-color: var(--error-background-color);
-   color: var(--error-text-color);
-}
+article {
+   &.error {
+      background-color: var(--error-background-color);
+      color: var(--error-text-color);
 
-article.success {
-   background-color: var(--success-background-color);
-   color: var(--success-text-color);
-}
+      a {
+         color: var(--error-text-color);
+      }
+   }
 
-article.warning {
-   background-color: #fff8e1;
-   color: #ff6f00;
+   &.success {
+      background-color: var(--success-background-color);
+      color: var(--success-text-color);
+
+      a {
+         color: var(--success-text-color);
+      }
+   }
+
+   &.warning {
+      background-color: #fff8e1;
+      color: #ff6f00;
+
+      a {
+         color: #ff6f00;
+      }
+   }
 }
 
 /* Dashboard cards */

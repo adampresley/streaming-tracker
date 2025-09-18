@@ -2,6 +2,7 @@ package show
 
 import (
 	"fmt"
+	"html/template"
 	"log/slog"
 	"net/http"
 	"slices"
@@ -83,7 +84,7 @@ func (c ShowController) AddShowPage(w http.ResponseWriter, r *http.Request) {
 
 	viewData := viewmodels.AddShow{
 		BaseViewModel: viewmodels.BaseViewModel{
-			Message: httphelpers.GetFromRequest[string](r, "message"),
+			Message: template.HTML(httphelpers.GetFromRequest[string](r, "message")),
 			IsHtmx:  httphelpers.IsHtmx(r),
 			JavascriptIncludes: []rendering.JavascriptInclude{
 				{Src: "/static/js/pages/add-show.js", Type: "module"},
@@ -145,7 +146,7 @@ func (c ShowController) AddShowAction(w http.ResponseWriter, r *http.Request) {
 
 	viewData := viewmodels.AddShow{
 		BaseViewModel: viewmodels.BaseViewModel{
-			Message: httphelpers.GetFromRequest[string](r, "message"),
+			Message: template.HTML(httphelpers.GetFromRequest[string](r, "message")),
 			IsHtmx:  httphelpers.IsHtmx(r),
 		},
 		ShowName:     httphelpers.GetFromRequest[string](r, "showName"),
@@ -209,7 +210,7 @@ func (c ShowController) AddShowAction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/?message=New show added successfully!", http.StatusSeeOther)
+	http.Redirect(w, r, "/?message=New show added successfully! <a href=\"/shows/add\">Add another show</a>", http.StatusSeeOther)
 }
 
 /*
@@ -309,7 +310,7 @@ func (c ShowController) EditShowPage(w http.ResponseWriter, r *http.Request) {
 
 	viewData := viewmodels.EditShow{
 		BaseViewModel: viewmodels.BaseViewModel{
-			Message: httphelpers.GetFromRequest[string](r, "message"),
+			Message: template.HTML(httphelpers.GetFromRequest[string](r, "message")),
 			IsHtmx:  httphelpers.IsHtmx(r),
 			JavascriptIncludes: []rendering.JavascriptInclude{
 				{Src: "/static/js/pages/edit-show.js", Type: "module"},
@@ -398,7 +399,7 @@ func (c ShowController) EditShowAction(w http.ResponseWriter, r *http.Request) {
 
 	viewData := viewmodels.EditShow{
 		BaseViewModel: viewmodels.BaseViewModel{
-			Message: httphelpers.GetFromRequest[string](r, "message"),
+			Message: template.HTML(httphelpers.GetFromRequest[string](r, "message")),
 			IsHtmx:  httphelpers.IsHtmx(r),
 		},
 		ShowID:         showID,
@@ -500,7 +501,7 @@ func (c ShowController) ManageShowsPage(w http.ResponseWriter, r *http.Request) 
 	session := c.GetSession(r)
 
 	baseViewModel := viewmodels.BaseViewModel{
-		Message: httphelpers.GetFromRequest[string](r, "message"),
+		Message: template.HTML(httphelpers.GetFromRequest[string](r, "message")),
 		IsHtmx:  httphelpers.IsHtmx(r),
 		JavascriptIncludes: []rendering.JavascriptInclude{
 			{Src: "/static/js/pages/manage-shows.js", Type: "module"},

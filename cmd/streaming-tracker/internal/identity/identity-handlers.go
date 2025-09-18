@@ -3,6 +3,7 @@ package identity
 import (
 	"errors"
 	"fmt"
+	"html/template"
 	"log/slog"
 	"net/http"
 	"strings"
@@ -71,7 +72,7 @@ func (c IdentityController) AccountSignUpPage(w http.ResponseWriter, r *http.Req
 	viewData := viewmodels.AccountSignUp{
 		BaseViewModel: viewmodels.BaseViewModel{
 			IsHtmx:  httphelpers.IsHtmx(r),
-			Message: httphelpers.GetFromRequest[string](r, "message"),
+			Message: template.HTML(httphelpers.GetFromRequest[string](r, "message")),
 		},
 		Email:       "",
 		Password:    "",
@@ -98,7 +99,7 @@ func (c IdentityController) AccountSignUpAction(w http.ResponseWriter, r *http.R
 	viewData := viewmodels.AccountSignUp{
 		BaseViewModel: viewmodels.BaseViewModel{
 			IsHtmx:  httphelpers.IsHtmx(r),
-			Message: httphelpers.GetFromRequest[string](r, "message"),
+			Message: template.HTML(httphelpers.GetFromRequest[string](r, "message")),
 		},
 		Email:       httphelpers.GetFromRequest[string](r, "email"),
 		Password:    strings.TrimSpace(httphelpers.GetFromRequest[string](r, "password")),
@@ -215,7 +216,7 @@ func (c IdentityController) AccountSignUpSuccessPage(w http.ResponseWriter, r *h
 	viewData := viewmodels.AccountSignUpSuccess{
 		BaseViewModel: viewmodels.BaseViewModel{
 			IsHtmx:  httphelpers.IsHtmx(r),
-			Message: httphelpers.GetFromRequest[string](r, "message"),
+			Message: template.HTML(httphelpers.GetFromRequest[string](r, "message")),
 		},
 		Email:          httphelpers.GetFromRequest[string](r, "email"),
 		HasAccountCode: len(httphelpers.GetFromRequest[string](r, "hasAccountCode")) > 0,
@@ -233,7 +234,7 @@ func (c IdentityController) LoginPage(w http.ResponseWriter, r *http.Request) {
 	viewData := viewmodels.Login{
 		BaseViewModel: viewmodels.BaseViewModel{
 			IsHtmx:  httphelpers.IsHtmx(r),
-			Message: httphelpers.GetFromRequest[string](r, "message"),
+			Message: template.HTML(httphelpers.GetFromRequest[string](r, "message")),
 			JavascriptIncludes: []rendering.JavascriptInclude{
 				{Src: "/static/js/pages/login.js", Type: "module"},
 			},
@@ -260,7 +261,7 @@ func (c IdentityController) LoginAction(w http.ResponseWriter, r *http.Request) 
 	viewData := viewmodels.Login{
 		BaseViewModel: viewmodels.BaseViewModel{
 			IsHtmx:  httphelpers.IsHtmx(r),
-			Message: httphelpers.GetFromRequest[string](r, "message"),
+			Message: template.HTML(httphelpers.GetFromRequest[string](r, "message")),
 			JavascriptIncludes: []rendering.JavascriptInclude{
 				{Src: "/static/js/pages/login.js", Type: "module"},
 			},
@@ -339,7 +340,7 @@ func (c IdentityController) AccountVerifyPage(w http.ResponseWriter, r *http.Req
 	viewData := viewmodels.AccountVerify{
 		BaseViewModel: viewmodels.BaseViewModel{
 			IsHtmx:  httphelpers.IsHtmx(r),
-			Message: httphelpers.GetFromRequest[string](r, "message"),
+			Message: template.HTML(httphelpers.GetFromRequest[string](r, "message")),
 		},
 		ActivationCode: httphelpers.GetFromRequest[string](r, "code"),
 		JoinToken:      httphelpers.GetFromRequest[string](r, "accountCode"),
@@ -363,7 +364,7 @@ func (c IdentityController) AccountVerifyAction(w http.ResponseWriter, r *http.R
 	viewData := viewmodels.AccountVerify{
 		BaseViewModel: viewmodels.BaseViewModel{
 			IsHtmx:  httphelpers.IsHtmx(r),
-			Message: httphelpers.GetFromRequest[string](r, "message"),
+			Message: template.HTML(httphelpers.GetFromRequest[string](r, "message")),
 		},
 		ActivationCode: strings.TrimSpace(httphelpers.GetFromRequest[string](r, "code")),
 		JoinToken:      strings.TrimSpace(httphelpers.GetFromRequest[string](r, "accountCode")),

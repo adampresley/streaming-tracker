@@ -1,6 +1,7 @@
 package home
 
 import (
+	"html/template"
 	"log/slog"
 	"net/http"
 
@@ -51,7 +52,7 @@ func (c HomeController) ErrorPage(w http.ResponseWriter, r *http.Request) {
 
 	viewData := viewmodels.Error{
 		BaseViewModel: viewmodels.BaseViewModel{
-			Message: httphelpers.GetFromRequest[string](r, "message"),
+			Message: template.HTML(httphelpers.GetFromRequest[string](r, "message")),
 			IsError: true,
 			IsHtmx:  httphelpers.IsHtmx(r),
 		},
@@ -75,7 +76,7 @@ func (c HomeController) HomePage(w http.ResponseWriter, r *http.Request) {
 	viewData := viewmodels.Home{
 		BaseViewModel: viewmodels.BaseViewModel{
 			IsHtmx:  httphelpers.IsHtmx(r),
-			Message: httphelpers.GetFromRequest[string](r, "message"),
+			Message: template.HTML(httphelpers.GetFromRequest[string](r, "message")),
 		},
 		Shows: []viewmodels.DashboardShow{},
 	}

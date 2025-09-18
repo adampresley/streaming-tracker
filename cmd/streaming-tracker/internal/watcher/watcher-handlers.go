@@ -1,6 +1,7 @@
 package watcher
 
 import (
+	"html/template"
 	"log/slog"
 	"net/http"
 
@@ -60,7 +61,7 @@ func (c WatcherController) ManageWatchersPage(w http.ResponseWriter, r *http.Req
 
 	viewData := viewmodels.ManageWatchers{
 		BaseViewModel: viewmodels.BaseViewModel{
-			Message: httphelpers.GetFromRequest[string](r, "message"),
+			Message: template.HTML(httphelpers.GetFromRequest[string](r, "message")),
 			IsHtmx:  httphelpers.IsHtmx(r),
 		},
 		Watchers: []viewmodels.WatcherDisplay{},
