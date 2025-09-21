@@ -6,6 +6,9 @@
    --pico-form-element-spacing-vertical: 0.45rem;
    --pico-form-element-spacing-horizontal: 0.35rem;
    --tertiary-background: rgb(216, 208, 241);
+   --search-results-border: var(--pico-muted-border-color);
+   --search-result-hover: var(--pico-secondary-background);
+   --search-result-selected: var(--pico-primary-background);
 }
 
 /* My overrides */
@@ -53,6 +56,7 @@ body {
                transition: background-color 0.2s ease;
 
                &:hover {
+                  color: var(--pico-contrast);
                   background-color: var(--pico-secondary-background);
                }
             }
@@ -289,5 +293,121 @@ table {
             }
          }
       }
+   }
+}
+
+/* Search Results Styles */
+.search-results {
+   position: relative;
+   margin-top: -2rem;
+   border: 1px solid var(--search-results-border);
+   border-radius: var(--pico-border-radius);
+   background: var(--pico-card-background-color);
+   box-shadow: var(--pico-box-shadow);
+   z-index: 1000;
+
+   .search-results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--search-results-border);
+      background: var(--pico-secondary-background);
+
+      .clear-search {
+         background: none;
+         border: none;
+         font-size: 1.25rem;
+         cursor: pointer;
+         color: var(--pico-muted-color);
+         padding: 0;
+         margin: 0;
+         line-height: 1;
+
+         &:hover {
+            color: var(--pico-color);
+         }
+      }
+   }
+
+   .search-results-list {
+      max-height: 300px;
+      overflow-y: auto;
+
+      .search-result-item {
+         display: flex;
+         align-items: center;
+         gap: 1rem;
+         padding: 0.75rem 1rem;
+         cursor: pointer;
+         border-bottom: 1px solid var(--search-results-border);
+         position: relative;
+
+         &:last-child {
+            border-bottom: none;
+         }
+
+         &:hover,
+         &.selected {
+            background: var(--search-result-hover);
+         }
+
+         &.selected {
+            background: var(--search-result-selected);
+            color: var(--pico-primary-inverse);
+         }
+
+         .search-result-image {
+            width: 40px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: var(--pico-border-radius);
+            flex-shrink: 0;
+         }
+
+         .search-result-content {
+            flex: 1;
+            min-width: 0;
+         }
+
+         .search-result-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+         }
+
+         .search-result-platforms {
+            font-size: 0.875rem;
+            color: var(--pico-muted-color);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+         }
+
+         &.selected .search-result-platforms {
+            color: var(--pico-primary-inverse);
+            opacity: 0.8;
+         }
+      }
+
+      .search-no-results,
+      .search-error {
+         padding: 1rem;
+         text-align: center;
+         color: var(--pico-muted-color);
+         font-style: italic;
+      }
+
+      .search-error {
+         color: var(--pico-del-color);
+      }
+   }
+
+   .search-loading {
+      padding: 1rem;
+      text-align: center;
+      color: var(--pico-muted-color);
    }
 }

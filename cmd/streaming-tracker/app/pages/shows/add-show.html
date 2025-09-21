@@ -10,9 +10,26 @@
    <fieldset>
       <label>
          Show name
-         <input type="text" name="showName" id="showName" maxlength="128" minlength="1" required value="{{.ShowName}}">
+         <input type="text" name="showName" id="showName" maxlength="128" minlength="1" required value="{{.ShowName}}"
+            autocomplete="off">
          <small>Enter the name of the show you want to track</small>
       </label>
+
+      <!-- Search results container -->
+      <div id="searchResults" class="search-results" style="display: none;">
+         <div class="search-results-header">
+            <strong>Search Results</strong>
+            <button type="button" id="clearSearch" class="clear-search">×</button>
+         </div>
+
+         <div id="searchResultsList" class="search-results-list">
+            <!-- Results will be populated here -->
+         </div>
+
+         <div id="searchLoading" class="search-loading" style="display: none;">
+            <small>Searching...</small>
+         </div>
+      </div>
 
       <label>
          Total seasons
@@ -48,5 +65,9 @@
 
    <input type="submit" id="submit" value="Add Show" />
 </form>
+
+<p>
+   <small><em>Search results provided by <a href="https://www.tvmaze.com/" _target="_blank">TV Maze API</a></em></small>
+</p>
 
 {{end}}

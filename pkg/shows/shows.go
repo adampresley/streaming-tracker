@@ -1,12 +1,24 @@
 package shows
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
+	"log/slog"
+	"sort"
+	"strconv"
+	"strings"
+	"sync"
 
+	"github.com/adampresley/adamgokit/rest"
+	"github.com/adampresley/adamgokit/rest/calloptions"
+	"github.com/adampresley/adamgokit/rest/clientoptions"
 	"github.com/adampresley/streaming-tracker/pkg/models"
 	"github.com/adampresley/streaming-tracker/pkg/querymodels"
 	"github.com/adampresley/streaming-tracker/pkg/requesttypes"
 	"github.com/adampresley/streaming-tracker/pkg/services"
+	"github.com/adampresley/streaming-tracker/pkg/tvmaze"
+	"github.com/alitto/pond/v2"
 	"github.com/georgysavva/scany/v2/pgxscan"
 	"github.com/jackc/pgx/v5/pgconn"
 	orderedmap "github.com/wk8/go-ordered-map/v2"
@@ -28,6 +40,7 @@ type ShowServicer interface {
 	GetActiveShowsGroupedByWatchersAndStatus(accountID int) (*orderedmap.OrderedMap[string, *orderedmap.OrderedMap[string, []models.ShowGroupedByStatusAndWatchers]], error)
 	GetFinishedShows(accountID int) ([]querymodels.Shows, error)
 	GetShowByID(accountID, showID int) (*models.ShowForEdit, error)
+	OnlineSearch(searchTerm, country string) ([]models.OnlineShowSearchResult, error)
 	SearchShows(accountID int, options ...SearchShowsOption) ([]querymodels.Shows, int, error)
 	StartWatching(accountID, showID int) error
 	UpdateShow(accountID int, req requesttypes.EditShowRequest) error
@@ -35,10 +48,12 @@ type ShowServicer interface {
 
 type ShowServiceConfig struct {
 	services.DbServiceBaseConfig
+	RestClientOptions *clientoptions.ClientOptions
 }
 
 type ShowService struct {
 	services.DbServiceBase
+	restClientOptions *clientoptions.ClientOptions
 }
 
 func NewShowService(config ShowServiceConfig) ShowService {
@@ -48,6 +63,7 @@ func NewShowService(config ShowServiceConfig) ShowService {
 			DB:           config.DB,
 			PageSize:     config.PageSize,
 		},
+		restClientOptions: config.RestClientOptions,
 	}
 }
 
@@ -533,6 +549,142 @@ GROUP BY s.id, s.name, s.num_seasons, s.platform_id, ss.finished_at, s.cancelled
 	}
 
 	return &result, nil
+}
+
+func (s ShowService) OnlineSearch(searchTerm, country string) ([]models.OnlineShowSearchResult, error) {
+	var (
+		err           error
+		response      tvmaze.SearchResults
+		httpResult    rest.HttpResult
+		result        []models.OnlineShowSearchResult
+		unmarshallErr *json.UnmarshalTypeError
+	)
+
+	m := &sync.Mutex{}
+
+	response, httpResult, err = rest.Get[tvmaze.SearchResults](
+		s.restClientOptions,
+		"/search/shows",
+		calloptions.WithQueryParams(map[string]string{
+			"q": searchTerm,
+		}),
+	)
+
+	if err != nil {
+		if errors.As(err, &unmarshallErr) {
+			slog.Info("no results found", "searchTerm", searchTerm, "country", country, "body", httpResult.Body)
+			return result, nil
+		}
+
+		slog.Error("error fetching online search results", "statusCode", httpResult.StatusCode, "body", httpResult.Body)
+		return result, fmt.Errorf("error fetching online search results: %w", err)
+	}
+
+	pool := pond.NewPool(3)
+
+	for _, show := range response {
+		pool.Submit(func() {
+			seasonsResponse, _, err := rest.Get[tvmaze.Seasons](
+				s.restClientOptions,
+				"/shows/"+strconv.Itoa(show.Show.ID)+"/seasons",
+			)
+
+			if err != nil {
+				slog.Error("error fetching seasons", "showID", show.Show.ID, "error", err)
+			}
+
+			n := models.OnlineShowSearchResult{
+				ImageURLs:        []string{},
+				ImdbLink:         "",
+				Name:             show.Show.Name,
+				NumSeasons:       len(seasonsResponse),
+				Platforms:        []models.Platform{},
+				RawPlatformNames: []string{},
+				Weight:           show.Show.Weight,
+			}
+
+			slog.Debug("found online show", "name", show.Show.Name, "platforms", n.RawPlatformNames)
+
+			// Images
+			if show.Show.Image != nil {
+				if show.Show.Image.Medium != "" {
+					n.ImageURLs = append(n.ImageURLs, show.Show.Image.Medium)
+				}
+
+				if show.Show.Image.Original != "" {
+					n.ImageURLs = append(n.ImageURLs, show.Show.Image.Original)
+				}
+			}
+
+			// Lookup matching platforms from our database
+			if show.Show.Network != nil || show.Show.WebChannel != nil {
+				if show.Show.WebChannel != nil {
+					n.RawPlatformNames = append(n.RawPlatformNames, show.Show.WebChannel.Name)
+				}
+
+				if show.Show.Network != nil {
+					n.RawPlatformNames = append(n.RawPlatformNames, show.Show.Network.Name)
+				}
+
+				lowerNetwork := strings.ToLower(n.RawPlatformNames[0])
+
+				if platforms, lookupErr := s.lookupPlatformsByExternalNames([]string{lowerNetwork}, "tvmaze"); lookupErr != nil {
+					slog.Error("error looking up platforms", "error", lookupErr, "externalNames", lowerNetwork)
+				} else {
+					n.Platforms = platforms
+				}
+			}
+
+			// IMDB
+			if show.Show.Externals.IMDB != nil && *show.Show.Externals.IMDB != "" {
+				n.ImdbLink = "https://www.imdb.com/title/" + *show.Show.Externals.IMDB
+			}
+
+			m.Lock()
+			result = append(result, n)
+			m.Unlock()
+		})
+	}
+
+	pool.StopAndWait()
+
+	// Sort by weight
+	sort.Slice(result, func(i, j int) bool {
+		return result[i].Weight > result[j].Weight
+	})
+
+	return result, nil
+}
+
+func (s ShowService) lookupPlatformsByExternalNames(externalNames []string, source string) ([]models.Platform, error) {
+	var (
+		err       error
+		platforms []models.Platform
+	)
+
+	if len(externalNames) == 0 {
+		return platforms, nil
+	}
+
+	ctx, cancel := s.GetContext()
+	defer cancel()
+
+	query := `
+SELECT DISTINCT p.id, p.created_at, p.updated_at, p.name, p.icon
+FROM platforms p
+INNER JOIN platform_aliases pa ON pa.platform_id = p.id
+WHERE LOWER(pa.external_name) = ANY($1) AND pa.source = $2
+ORDER BY p.name
+	`
+
+	if err = pgxscan.Select(ctx, s.DB, &platforms, query, externalNames, source); err != nil {
+		if pgxscan.NotFound(err) {
+			return platforms, nil
+		}
+		return platforms, fmt.Errorf("error looking up platforms by external names: %w", err)
+	}
+
+	return platforms, nil
 }
 
 func (s ShowService) UpdateShow(accountID int, req requesttypes.EditShowRequest) error {

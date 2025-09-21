@@ -36,6 +36,7 @@ type ShowHandlers interface {
 	EditShowAction(w http.ResponseWriter, r *http.Request)
 	FinishSeasonAction(w http.ResponseWriter, r *http.Request)
 	ManageShowsPage(w http.ResponseWriter, r *http.Request)
+	OnlineSearchAction(w http.ResponseWriter, r *http.Request)
 	StartWatchingAction(w http.ResponseWriter, r *http.Request)
 }
 
@@ -693,6 +694,30 @@ func (c ShowController) FinishSeasonAction(w http.ResponseWriter, r *http.Reques
 	}
 
 	c.renderer.Render("components/dashboard-shows", viewData, w)
+}
+
+/*
+GET /shows/search?term=searchterm
+*/
+func (c ShowController) OnlineSearchAction(w http.ResponseWriter, r *http.Request) {
+	var (
+		err     error
+		results []models.OnlineShowSearchResult
+	)
+
+	searchTerm := r.URL.Query().Get("term")
+	if searchTerm == "" {
+		http.Error(w, "Search term is required", http.StatusBadRequest)
+		return
+	}
+
+	if results, err = c.showService.OnlineSearch(searchTerm, "US"); err != nil {
+		slog.Error("error performing online search", "error", err, "searchTerm", searchTerm)
+		http.Error(w, "Error performing search", http.StatusInternalServerError)
+		return
+	}
+
+	httphelpers.WriteJson(w, http.StatusOK, results)
 }
 
 /*

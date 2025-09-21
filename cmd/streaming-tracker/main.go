@@ -16,6 +16,7 @@ import (
 	"github.com/adampresley/adamgokit/httphelpers"
 	"github.com/adampresley/adamgokit/mux"
 	"github.com/adampresley/adamgokit/rendering"
+	"github.com/adampresley/adamgokit/rest/clientoptions"
 	"github.com/adampresley/adamgokit/sessions"
 	"github.com/adampresley/streaming-tracker/cmd/streaming-tracker/internal/configuration"
 	"github.com/adampresley/streaming-tracker/cmd/streaming-tracker/internal/home"
@@ -167,6 +168,11 @@ func main() {
 			DB:           db,
 			PageSize:     config.PageSize,
 		},
+		RestClientOptions: &clientoptions.ClientOptions{
+			BaseURL:    config.TvmazeBaseURL,
+			Debug:      Version == "development",
+			HttpClient: http.DefaultClient,
+		},
 	})
 
 	/*
@@ -237,6 +243,7 @@ func main() {
 		{Path: "GET /shows/edit/{id}", HandlerFunc: showController.EditShowPage},
 		{Path: "POST /shows/edit/{id}", HandlerFunc: showController.EditShowAction},
 		{Path: "GET /shows/manage", HandlerFunc: showController.ManageShowsPage},
+		{Path: "GET /shows/search", HandlerFunc: showController.OnlineSearchAction},
 		{Path: "POST /shows/start-watching", HandlerFunc: showController.StartWatchingAction},
 		{Path: "POST /shows/finish-season", HandlerFunc: showController.FinishSeasonAction},
 		{Path: "POST /shows/add-season", HandlerFunc: showController.AddSeasonAction},
