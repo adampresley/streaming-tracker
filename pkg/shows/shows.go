@@ -35,6 +35,7 @@ type ShowServicer interface {
 	BackToWantToWatch(accountID, showID int) error
 	CancelShow(accountID, showID int) error
 	DeleteShow(accountID, showID int) error
+	FindShowImageByName(showName string) (string, error)
 	FinishSeason(accountID, showID int) error
 	GetActiveShowsGroupedByStatusAndWatchers(accountID int) (*orderedmap.OrderedMap[string, *orderedmap.OrderedMap[string, []models.ShowGroupedByStatusAndWatchers]], error)
 	GetActiveShowsGroupedByWatchersAndStatus(accountID int) (*orderedmap.OrderedMap[string, *orderedmap.OrderedMap[string, []models.ShowGroupedByStatusAndWatchers]], error)
@@ -86,12 +87,12 @@ func (s ShowService) AddShow(accountID int, req requesttypes.AddShowRequest) (in
 
 	// Insert the show
 	insertShowQuery := `
-INSERT INTO shows (name, num_seasons, platform_id, account_id, created_at, updated_at)
-VALUES ($1, $2, $3, $4, NOW() AT TIME ZONE 'UTC', NOW() AT TIME ZONE 'UTC')
+INSERT INTO shows (name, num_seasons, platform_id, account_id, poster_image, created_at, updated_at)
+VALUES ($1, $2, $3, $4, $5, NOW() AT TIME ZONE 'UTC', NOW() AT TIME ZONE 'UTC')
 RETURNING id
 	`
 
-	if err = tx.QueryRow(ctx, insertShowQuery, req.Name, req.TotalSeasons, req.PlatformID, accountID).Scan(&showID); err != nil {
+	if err = tx.QueryRow(ctx, insertShowQuery, req.Name, req.TotalSeasons, req.PlatformID, accountID, req.PosterImage).Scan(&showID); err != nil {
 		return 0, fmt.Errorf("error inserting show: %w", err)
 	}
 
@@ -299,6 +300,7 @@ SELECT
 	, ss.current_season
 	, ss.finished_at
 	, string_agg(w.name, ', ' ORDER BY w.name) AS watcher_name
+	, s.poster_image
 FROM watch_status AS ws
 	INNER JOIN show_status AS ss ON ss.watch_status_id=ws.id
 	LEFT JOIN shows AS s ON s.id=ss.show_id
@@ -308,10 +310,10 @@ FROM watch_status AS ws
 WHERE 1=1
 	AND ss.account_id=$1
 	AND ss.watch_status_id IN (1, 2)
-GROUP BY 
-	s.id, p.name, p.icon, ws.status, ss.current_season, 
-	ss.finished_at, ss.watch_status_id
-ORDER BY 
+GROUP BY
+	s.id, p.name, p.icon, ws.status, ss.current_season,
+	ss.finished_at, ss.watch_status_id, s.poster_image
+ORDER BY
 	ss.watch_status_id DESC,
 	s.name ASC
 	`
@@ -354,6 +356,7 @@ ORDER BY
 			WatchStatus:   row.WatchStatus,
 			CurrentSeason: row.CurrentSeason,
 			WatcherName:   row.WatcherName,
+			PosterImage:   row.PosterImage,
 		}
 
 		if row.DateCancelled.Valid {
@@ -384,6 +387,7 @@ SELECT
 	s.id AS show_id
 	, s.name AS show_name
 	, s.num_seasons
+	, coalesce(s.poster_image, '') AS poster_image
 	, p.name AS platform_name
 	, p.icon AS platform_icon
 	, s.cancelled
@@ -402,7 +406,7 @@ WHERE 1=1
 	AND ss.account_id=$1
 	AND ss.watch_status_id IN (1, 2)
 GROUP BY 
-	s.id, p.name, p.icon, ws.status, ss.current_season, 
+	s.id, s.poster_image, p.name, p.icon, ws.status, ss.current_season, 
 	ss.finished_at, ss.watch_status_id
 ORDER BY
 	watcher_name ASC,
@@ -448,6 +452,7 @@ ORDER BY
 			WatchStatus:   row.WatchStatus,
 			CurrentSeason: row.CurrentSeason,
 			WatcherName:   row.WatcherName,
+			PosterImage:   row.PosterImage,
 		}
 
 		if row.DateCancelled.Valid {
@@ -533,12 +538,13 @@ SELECT
 	, ss.finished_at
 	, s.cancelled
 	, s.date_cancelled
+	, coalesce(s.poster_image, '') as poster_image
 FROM shows s
 	INNER JOIN show_status ss ON ss.show_id = s.id
 	INNER JOIN watchers_to_show_statuses wtss ON wtss.show_status_id = ss.id
 WHERE s.account_id = $1
 	AND s.id = $2
-GROUP BY s.id, s.name, s.num_seasons, s.platform_id, ss.finished_at, s.cancelled, s.date_cancelled
+GROUP BY s.id, s.name, s.num_seasons, s.platform_id, ss.finished_at, s.cancelled, s.date_cancelled, s.poster_image
 	`
 
 	if err = pgxscan.Get(ctx, s.DB, &result, query, accountID, showID); err != nil {
@@ -656,6 +662,33 @@ func (s ShowService) OnlineSearch(searchTerm, country string) ([]models.OnlineSh
 	return result, nil
 }
 
+func (s ShowService) FindShowImageByName(showName string) (string, error) {
+	var (
+		err        error
+		response   tvmaze.Show
+		httpResult rest.HttpResult
+	)
+
+	response, httpResult, err = rest.Get[tvmaze.Show](
+		s.restClientOptions,
+		"/singlesearch/shows",
+		calloptions.WithQueryParams(map[string]string{
+			"q": showName,
+		}),
+	)
+
+	if err != nil {
+		slog.Error("error fetching show image from TVMaze", "statusCode", httpResult.StatusCode, "body", httpResult.Body, "showName", showName)
+		return "", fmt.Errorf("error fetching show image: %w", err)
+	}
+
+	if response.Image != nil && response.Image.Medium != "" {
+		return response.Image.Medium, nil
+	}
+
+	return "", nil
+}
+
 func (s ShowService) lookupPlatformsByExternalNames(externalNames []string, source string) ([]models.Platform, error) {
 	var (
 		err       error
@@ -705,12 +738,12 @@ func (s ShowService) UpdateShow(accountID int, req requesttypes.EditShowRequest)
 
 	// Update the show
 	updateShowQuery := `
-UPDATE shows 
-SET name = $1, num_seasons = $2, platform_id = $3, updated_at = NOW() AT TIME ZONE 'UTC'
-WHERE id = $4 AND account_id = $5
+UPDATE shows
+SET name = $1, num_seasons = $2, platform_id = $3, poster_image = $4, updated_at = NOW() AT TIME ZONE 'UTC'
+WHERE id = $5 AND account_id = $6
 	`
 
-	result, err := tx.Exec(ctx, updateShowQuery, req.Name, req.TotalSeasons, req.PlatformID, req.ID, accountID)
+	result, err := tx.Exec(ctx, updateShowQuery, req.Name, req.TotalSeasons, req.PlatformID, req.PosterImage, req.ID, accountID)
 	if err != nil {
 		return fmt.Errorf("error updating show: %w", err)
 	}
@@ -791,6 +824,7 @@ WITH matches AS (
 		, ss.current_season
 		, ss.finished_at
 		, string_agg(w.name, ', ' ORDER BY w.name) AS watcher_name
+		, coalesce(s.poster_image, '') AS poster_image
 	FROM watch_status AS ws
 		INNER JOIN show_status AS ss ON ss.watch_status_id=ws.id
 		LEFT JOIN shows AS s ON s.id=ss.show_id
@@ -817,8 +851,8 @@ WITH matches AS (
 
 	query += `
 	GROUP BY 
-		s.id, p.name, p.icon, ws.status, ss.current_season, 
-		ss.finished_at, ss.watch_status_id
+		s.id, p.name, p.icon, ws.status, ss.current_season,
+		ss.finished_at, ss.watch_status_id, s.poster_image
 	ORDER BY 
 		s.name ASC
 )

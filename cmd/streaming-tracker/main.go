@@ -244,6 +244,7 @@ func main() {
 		{Path: "POST /shows/edit/{id}", HandlerFunc: showController.EditShowAction},
 		{Path: "GET /shows/manage", HandlerFunc: showController.ManageShowsPage},
 		{Path: "GET /shows/search", HandlerFunc: showController.OnlineSearchAction},
+		{Path: "GET /shows/find-image", HandlerFunc: showController.FindShowImageAction},
 		{Path: "POST /shows/start-watching", HandlerFunc: showController.StartWatchingAction},
 		{Path: "POST /shows/finish-season", HandlerFunc: showController.FinishSeasonAction},
 		{Path: "POST /shows/add-season", HandlerFunc: showController.AddSeasonAction},

@@ -205,6 +205,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
       totalSeasonsEl.value = show.numSeasons;
 
+      // Auto-populate poster image if available
+      const posterImageEl = document.querySelector("#posterImage");
+      if (show.imageUrls && show.imageUrls.length > 0) {
+         posterImageEl.value = show.imageUrls[0];
+      }
+
       // Auto-select platform if we have a match
       if (show.platforms && show.platforms.length > 0) {
          const firstPlatform = show.platforms[0];

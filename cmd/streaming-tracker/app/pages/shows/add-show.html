@@ -39,6 +39,13 @@
       </label>
 
       <label>
+         Poster image URL
+         <input type="url" name="posterImage" id="posterImage" maxlength="512" value="{{.PosterImage}}"
+            autocomplete="off" placeholder="https://example.com/poster.jpg">
+         <small>Enter the URL of the show's poster image (optional)</small>
+      </label>
+
+      <label>
          Platform
          <select name="platform" id="platform" required>
             <option value="0">Select a platform</option>

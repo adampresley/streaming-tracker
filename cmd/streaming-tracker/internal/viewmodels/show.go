@@ -12,6 +12,7 @@ type AddShow struct {
 	TotalSeasons int
 	PlatformID   int
 	WatcherIDs   []int
+	PosterImage  string
 	Platforms    []*models.Platform
 	Watchers     []SelectableWatcher
 }
@@ -24,6 +25,7 @@ type EditShow struct {
 	TotalSeasons    int
 	PlatformID      int
 	WatcherIDs      []int
+	PosterImage     string
 	Platforms       []*models.Platform
 	Watchers        []SelectableWatcher
 	ShowIsFinished  bool
@@ -55,4 +57,5 @@ type Show struct {
 	FinishedAt    string
 	WatcherName   string
 	TotalCount    int
+	PosterImage   string
 }

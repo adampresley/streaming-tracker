@@ -10,18 +10,30 @@
    <div class="shows">
       {{range .Shows}}
       <article class="show">
-         <header>
-            <h5>{{.ShowName}}</h5>
-            <small>{{.PlatformName}}</small>
-         </header>
+         <div class="show-content">
+            <div class="show-poster">
+               {{if .PosterImage}}
+               <img src="{{.PosterImage}}" alt="{{.ShowName}} poster" loading="lazy">
+               {{else}}
+               <div class="poster-placeholder">No Image</div>
+               {{end}}
+            </div>
 
-         {{if eq .WatchStatus "Want To Watch"}}
-         <p>{{.NumSeasons}} season{{if gt .NumSeasons 1}}s{{end}}</p>
-         {{end}}
+            <div class="show-details">
+               <header>
+                  <h5>{{.ShowName}}</h5>
+                  <small>{{.PlatformName}}</small>
+               </header>
 
-         {{if eq .WatchStatus "Watching"}}
-         <p>Season {{.CurrentSeason}} of {{.NumSeasons}}</p>
-         {{end}}
+               {{if eq .WatchStatus "Want To Watch"}}
+               <p>{{.NumSeasons}} season{{if gt .NumSeasons 1}}s{{end}}</p>
+               {{end}}
+
+               {{if eq .WatchStatus "Watching"}}
+               <p>Season {{.CurrentSeason}} of {{.NumSeasons}}</p>
+               {{end}}
+            </div>
+         </div>
 
          <footer>
             {{if eq .WatchStatus "Want To Watch"}}
@@ -45,7 +57,8 @@
                   More...
                </summary>
                <ul>
-                  <li><a href="#" hx-post="/shows/back-to-want-to-watch?id={{.ShowID}}" hx-target="#dashboard-shows" hx-swap="innerHTML">Back to Want to Watch</a></li>
+                  <li><a href="#" hx-post="/shows/back-to-want-to-watch?id={{.ShowID}}" hx-target="#dashboard-shows"
+                        hx-swap="innerHTML">Back to Want to Watch</a></li>
                </ul>
             </details>
             {{end}}

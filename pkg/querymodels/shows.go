@@ -16,6 +16,7 @@ type ActiveShowsGroupedByStatusAndWatchers struct {
 	CurrentSeason int          `db:"current_season"`
 	FinishedAt    sql.NullTime `db:"finished_at"`
 	WatcherName   string       `db:"watcher_name"`
+	PosterImage   string       `db:"poster_image"`
 }
 
 type Shows struct {
@@ -31,4 +32,5 @@ type Shows struct {
 	FinishedAt    sql.NullTime `db:"finished_at"`
 	WatcherName   string       `db:"watcher_name"`
 	TotalCount    int          `db:"total_count"`
+	PosterImage   string       `db:"poster_image"`
 }

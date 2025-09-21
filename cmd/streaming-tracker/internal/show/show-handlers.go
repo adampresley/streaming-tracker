@@ -34,6 +34,7 @@ type ShowHandlers interface {
 	DeleteShowAction(w http.ResponseWriter, r *http.Request)
 	EditShowPage(w http.ResponseWriter, r *http.Request)
 	EditShowAction(w http.ResponseWriter, r *http.Request)
+	FindShowImageAction(w http.ResponseWriter, r *http.Request)
 	FinishSeasonAction(w http.ResponseWriter, r *http.Request)
 	ManageShowsPage(w http.ResponseWriter, r *http.Request)
 	OnlineSearchAction(w http.ResponseWriter, r *http.Request)
@@ -154,6 +155,7 @@ func (c ShowController) AddShowAction(w http.ResponseWriter, r *http.Request) {
 		TotalSeasons: httphelpers.GetFromRequest[int](r, "totalSeasons"),
 		PlatformID:   httphelpers.GetFromRequest[int](r, "platform"),
 		WatcherIDs:   httphelpers.GetFromRequest[[]int](r, "watchers"),
+		PosterImage:  httphelpers.GetFromRequest[string](r, "posterImage"),
 		Platforms:    []*models.Platform{},
 		Watchers:     []viewmodels.SelectableWatcher{},
 	}
@@ -200,6 +202,7 @@ func (c ShowController) AddShowAction(w http.ResponseWriter, r *http.Request) {
 		TotalSeasons: viewData.TotalSeasons,
 		PlatformID:   viewData.PlatformID,
 		WatcherIDs:   viewData.WatcherIDs,
+		PosterImage:  viewData.PosterImage,
 	}
 
 	if _, err = c.showService.AddShow(session.AccountID, createShowRequest); err != nil {
@@ -358,6 +361,7 @@ func (c ShowController) EditShowPage(w http.ResponseWriter, r *http.Request) {
 	viewData.TotalSeasons = showData.NumSeasons
 	viewData.PlatformID = showData.PlatformID
 	viewData.WatcherIDs = showData.WatcherIds
+	viewData.PosterImage = showData.PosterImage
 
 	for _, watcher := range watchers {
 		isSelected := slices.Contains(showData.WatcherIds, watcher.ID.ID)
@@ -408,6 +412,7 @@ func (c ShowController) EditShowAction(w http.ResponseWriter, r *http.Request) {
 		TotalSeasons:   httphelpers.GetFromRequest[int](r, "totalSeasons"),
 		PlatformID:     httphelpers.GetFromRequest[int](r, "platform"),
 		WatcherIDs:     httphelpers.GetFromRequest[[]int](r, "watchers"),
+		PosterImage:    httphelpers.GetFromRequest[string](r, "posterImage"),
 		Platforms:      []*models.Platform{},
 		Watchers:       []viewmodels.SelectableWatcher{},
 		ShowIsFinished: false,
@@ -476,6 +481,7 @@ func (c ShowController) EditShowAction(w http.ResponseWriter, r *http.Request) {
 		TotalSeasons: viewData.TotalSeasons,
 		PlatformID:   viewData.PlatformID,
 		WatcherIDs:   viewData.WatcherIDs,
+		PosterImage:  viewData.PosterImage,
 	}
 
 	if err = c.showService.UpdateShow(session.AccountID, editShowRequest); err != nil {
@@ -721,6 +727,35 @@ func (c ShowController) OnlineSearchAction(w http.ResponseWriter, r *http.Reques
 }
 
 /*
+GET /shows/find-image?showName={showName}
+*/
+func (c ShowController) FindShowImageAction(w http.ResponseWriter, r *http.Request) {
+	var (
+		err      error
+		imageURL string
+		showName string
+	)
+
+	showName = r.URL.Query().Get("showName")
+	if showName == "" {
+		http.Error(w, "Show name is required", http.StatusBadRequest)
+		return
+	}
+
+	if imageURL, err = c.showService.FindShowImageByName(showName); err != nil {
+		slog.Error("error finding show image", "error", err, "showName", showName)
+		http.Error(w, "Error finding image", http.StatusInternalServerError)
+		return
+	}
+
+	response := map[string]string{
+		"imageURL": imageURL,
+	}
+
+	httphelpers.WriteJson(w, http.StatusOK, response)
+}
+
+/*
 Helper method to search shows and assemble ManageShows view data
 */
 func (c ShowController) searchShowsAndAssembleViewData(accountID, page int, showName string, platform int, baseViewModel viewmodels.BaseViewModel) (viewmodels.ManageShows, error) {
@@ -766,6 +801,7 @@ func (c ShowController) searchShowsAndAssembleViewData(accountID, page int, show
 			FinishedAt:    "",
 			WatcherName:   s.WatcherName,
 			TotalCount:    s.TotalCount,
+			PosterImage:   s.PosterImage,
 		}
 
 		if s.DateCancelled.Valid {

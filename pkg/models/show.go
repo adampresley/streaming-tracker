@@ -12,12 +12,14 @@ type Show struct {
 	Platform      Platform  `json:"platform"`
 	Cancelled     bool      `json:"cancelled"`
 	DateCancelled time.Time `json:"dateCancelled"`
+	PosterImage   string    `json:"posterImage"`
 }
 
 type CreateShowRequest struct {
-	Name       string `json:"name"`
-	NumSeasons int    `json:"numSeasons"`
-	PlatformID int    `json:"platformID"`
+	Name        string `json:"name"`
+	NumSeasons  int    `json:"numSeasons"`
+	PlatformID  int    `json:"platformID"`
+	PosterImage string `json:"posterImage"`
 }
 
 type ShowForEdit struct {
@@ -29,6 +31,7 @@ type ShowForEdit struct {
 	FinishedAt    *time.Time `json:"finishedAt"`
 	Cancelled     bool       `json:"cancelled"`
 	DateCancelled *time.Time `json:"dateCancelled"`
+	PosterImage   string     `json:"posterImage"`
 }
 
 type ShowGroupedByStatusAndWatchers struct {
@@ -43,6 +46,7 @@ type ShowGroupedByStatusAndWatchers struct {
 	CurrentSeason int        `json:"currentSeason"`
 	FinishedAt    *time.Time `json:"finishedAt"`
 	WatcherName   string     `json:"watcherName"`
+	PosterImage   string     `json:"posterImage"`
 }
 
 type ShowsGroupedByStatusAndWatchers struct {

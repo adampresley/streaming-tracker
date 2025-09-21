@@ -2,6 +2,8 @@ document.addEventListener("DOMContentLoaded", () => {
    const showNameEl = document.querySelector("#showName");
    const totalSeasonsEl = document.querySelector("#totalSeasons");
    const platformEl = document.querySelector("#platform");
+   const posterImageEl = document.querySelector("#posterImage");
+   const findImageBtn = document.querySelector("#findImageBtn");
    const watchersCheckboxes = document.querySelectorAll('input[name="watchers"]');
    const form = document.querySelector("#editShowForm");
    const cancelBtn = document.querySelector("#btnCancel");
@@ -56,6 +58,43 @@ document.addEventListener("DOMContentLoaded", () => {
     */
    form.noValidate = true;
    form.addEventListener("submit", (e) => validateForm(e, fields));
+
+   /*
+    * Setup Find Image button
+    */
+   findImageBtn.addEventListener("click", async () => {
+      const showName = showNameEl.value.trim();
+
+      if (!showName) {
+         alert("Please enter a show name first");
+         return;
+      }
+
+      findImageBtn.disabled = true;
+      findImageBtn.textContent = "Finding...";
+
+      try {
+         const response = await fetch(`/shows/find-image?showName=${encodeURIComponent(showName)}`);
+
+         if (!response.ok) {
+            throw new Error("Failed to find image");
+         }
+
+         const result = await response.json();
+
+         if (result.imageURL) {
+            posterImageEl.value = result.imageURL;
+         } else {
+            alert("No image found for this show");
+         }
+      } catch (error) {
+         console.error("Find image error:", error);
+         alert("Error finding image. Please try again.");
+      } finally {
+         findImageBtn.disabled = false;
+         findImageBtn.textContent = "Find";
+      }
+   });
 
    cancelBtn.addEventListener("click", () => {
       const urlParams = new URLSearchParams(document.referrer.split("?")[1] || "");

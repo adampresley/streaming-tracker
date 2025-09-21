@@ -22,6 +22,16 @@
       </label>
 
       <label>
+         Poster image URL
+         <div class="poster-image-input">
+            <input type="url" name="posterImage" id="posterImage" maxlength="512" value="{{.PosterImage}}"
+               autocomplete="off" placeholder="https://example.com/poster.jpg">
+            <button type="button" id="findImageBtn" class="secondary">Find</button>
+         </div>
+         <small>Enter the URL of the show's poster image (optional)</small>
+      </label>
+
+      <label>
          Platform
          <select name="platform" id="platform" required>
             <option value="0">Select a platform</option>

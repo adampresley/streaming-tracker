@@ -9,6 +9,7 @@ type AddShowRequest struct {
 	TotalSeasons int    `json:"totalSeasons"`
 	PlatformID   int    `json:"platformID"`
 	WatcherIDs   []int  `json:"watcherIDs"`
+	PosterImage  string `json:"posterImage"`
 }
 
 type EditShowRequest struct {
@@ -17,4 +18,5 @@ type EditShowRequest struct {
 	TotalSeasons int    `json:"totalSeasons"`
 	PlatformID   int    `json:"platformID"`
 	WatcherIDs   []int  `json:"watcherIDs"`
+	PosterImage  string `json:"posterImage"`
 }
