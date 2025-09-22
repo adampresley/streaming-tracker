@@ -1,7 +1,7 @@
 cloud.google.com/go/compute/metadata v0.3.0 h1:Tz+eQXMEqDIKRsmY3cHTL6FVaynIjX2QxYC4trgAKZc=
 cloud.google.com/go/compute/metadata v0.3.0/go.mod h1:zFmK7XCadkQkj6TtorcaGlCW1hT1fIilQDwofLpJ20k=
-github.com/adampresley/adamgokit v1.17.0 h1:hcwVOdjfFgonVpC0i3D/dQTj2kCWNTdmCtW3746RxN0=
-github.com/adampresley/adamgokit v1.17.0/go.mod h1:3SvEVK38F5NStG9dwSIRx8D62ATY/dqnp36eSqL/eVc=
+github.com/adampresley/adamgokit v1.17.1 h1:235yqfmhTFi+t6RpUgJD2pzUWDPnaXcCG0zhSQtcX1A=
+github.com/adampresley/adamgokit v1.17.1/go.mod h1:3SvEVK38F5NStG9dwSIRx8D62ATY/dqnp36eSqL/eVc=
 github.com/adampresley/configinator v1.1.0 h1:fXiVxsTITyjXZXvwhCv65LTRTtIt8rivMKtm9RJ2AWc=
 github.com/adampresley/configinator v1.1.0/go.mod h1:FuZrhp+NG4dgv+/uGIFF2FmlN0VJaLcPAT8j+ly5s2Q=
 github.com/adampresley/goth v1.0.2 h1:7/UY2sNqlX6afVAgHzDnQARLgDMGsxukldcyEKuiOzw=

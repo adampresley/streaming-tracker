@@ -72,7 +72,8 @@
             <td>{{.FinishedAt}}</td>
             <td>
                {{if not .Cancelled}}
-               <a href="/shows/edit/{{.ShowID}}" title="Edit {{.ShowName}}" alt="Edit {{.ShowName}}" role="button">
+               <a href="/shows/edit/{{.ShowID}}?referer={{$.Referer}}" title="Edit {{.ShowName}}"
+                  alt="Edit {{.ShowName}}" role="button">
                   <span class="icon edit"></span>
                </a>
 

@@ -247,6 +247,7 @@ func (c ShowController) AddSeasonAction(w http.ResponseWriter, r *http.Request) 
 		httphelpers.GetFromRequest[string](r, "showName"),
 		httphelpers.GetFromRequest[int](r, "platform"),
 		viewmodels.BaseViewModel{IsHtmx: true},
+		r,
 	)
 
 	if err != nil {
@@ -288,6 +289,7 @@ func (c ShowController) CancelShowAction(w http.ResponseWriter, r *http.Request)
 		httphelpers.GetFromRequest[string](r, "showName"),
 		httphelpers.GetFromRequest[int](r, "platform"),
 		viewmodels.BaseViewModel{IsHtmx: true},
+		r,
 	)
 
 	if err != nil {
@@ -328,8 +330,10 @@ func (c ShowController) EditShowPage(w http.ResponseWriter, r *http.Request) {
 		Platforms:      []*models.Platform{},
 		Watchers:       []viewmodels.SelectableWatcher{},
 		ShowIsFinished: false,
+		Referer:        httphelpers.GetFromRequest[string](r, "referer"),
 	}
 
+	fmt.Printf("referer: %s\n", viewData.Referer)
 	if viewData.Platforms, err = c.platformService.GetPlatforms(); err != nil {
 		slog.Error("error fetching platforms", "error", err)
 		viewData.Message = "There was an unexpected error trying to load this page. Please try again later."
@@ -416,6 +420,7 @@ func (c ShowController) EditShowAction(w http.ResponseWriter, r *http.Request) {
 		Platforms:      []*models.Platform{},
 		Watchers:       []viewmodels.SelectableWatcher{},
 		ShowIsFinished: false,
+		Referer:        httphelpers.GetFromRequest[string](r, "referer"),
 	}
 
 	/*
@@ -493,7 +498,7 @@ func (c ShowController) EditShowAction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/shows/manage?message=Show updated successfully!", http.StatusSeeOther)
+	http.Redirect(w, r, "/shows/manage?message=Show updated successfully!&"+viewData.Referer, http.StatusSeeOther)
 }
 
 /*
@@ -522,6 +527,7 @@ func (c ShowController) ManageShowsPage(w http.ResponseWriter, r *http.Request) 
 		httphelpers.GetFromRequest[string](r, "showName"),
 		httphelpers.GetFromRequest[int](r, "platform"),
 		baseViewModel,
+		r,
 	)
 
 	if err != nil {
@@ -758,7 +764,7 @@ func (c ShowController) FindShowImageAction(w http.ResponseWriter, r *http.Reque
 /*
 Helper method to search shows and assemble ManageShows view data
 */
-func (c ShowController) searchShowsAndAssembleViewData(accountID, page int, showName string, platform int, baseViewModel viewmodels.BaseViewModel) (viewmodels.ManageShows, error) {
+func (c ShowController) searchShowsAndAssembleViewData(accountID, page int, showName string, platform int, baseViewModel viewmodels.BaseViewModel, r *http.Request) (viewmodels.ManageShows, error) {
 	var (
 		err          error
 		totalRecords int
@@ -771,6 +777,7 @@ func (c ShowController) searchShowsAndAssembleViewData(accountID, page int, show
 		ShowName:      showName,
 		Platform:      platform,
 		Shows:         []viewmodels.Show{},
+		Referer:       httphelpers.QueryParamsToString(r),
 	}
 
 	// Search for shows with current filters

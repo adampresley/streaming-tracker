@@ -28,6 +28,7 @@ type EditShow struct {
 	PosterImage     string
 	Platforms       []*models.Platform
 	Watchers        []SelectableWatcher
+	Referer         string
 	ShowIsFinished  bool
 	ShowIsCancelled bool
 }
@@ -42,6 +43,7 @@ type ManageShows struct {
 	Platform int
 	Shows    []Show
 	Paging   paging.Paging
+	Referer  string
 }
 
 type Show struct {

@@ -12,22 +12,22 @@ document.addEventListener("DOMContentLoaded", () => {
     * Define fields and their validation functions
     */
    const fields = [
-      { 
-         field: showNameEl, 
+      {
+         field: showNameEl,
          validityFunc: validateShowName,
          events: {
             "input": (e) => validateShowName(e.target),
          },
       },
-      { 
-         field: totalSeasonsEl, 
+      {
+         field: totalSeasonsEl,
          validityFunc: validateTotalSeasons,
          events: {
             "input": (e) => validateTotalSeasons(e.target),
          },
       },
-      { 
-         field: platformEl, 
+      {
+         field: platformEl,
          validityFunc: validatePlatform,
          events: {
             "change": (e) => validatePlatform(e.target),
@@ -99,14 +99,14 @@ document.addEventListener("DOMContentLoaded", () => {
    cancelBtn.addEventListener("click", () => {
       const urlParams = new URLSearchParams(document.referrer.split("?")[1] || "");
       let targetUrl = "/shows/manage";
-      
+
       // If we came from the manage shows page, preserve the search parameters
       if (document.referrer.includes("/shows/manage")) {
          if (urlParams.toString()) {
             targetUrl = `/shows/manage?${urlParams.toString()}`;
          }
       }
-      
+
       window.location.href = targetUrl;
    });
 });
@@ -170,10 +170,10 @@ function validateWatchers() {
    const watchersCheckboxes = document.querySelectorAll('input[name="watchers"]');
    const helpText = document.querySelector("#watchersHelp");
    const fieldset = document.querySelector("#watchersFieldset");
-   
+
    // Check if any watchers are disabled (show is finished or cancelled)
    const hasDisabledWatchers = Array.from(watchersCheckboxes).some(checkbox => checkbox.disabled);
-   
+
    // If watchers are disabled, skip validation
    if (hasDisabledWatchers) {
       watchersCheckboxes.forEach(checkbox => checkbox.setCustomValidity(""));
@@ -181,9 +181,9 @@ function validateWatchers() {
       fieldset.setAttribute("aria-invalid", "false");
       return;
    }
-   
+
    const hasCheckedWatcher = Array.from(watchersCheckboxes).some(checkbox => checkbox.checked);
-   
+
    if (!hasCheckedWatcher) {
       watchersCheckboxes[0].setCustomValidity("Please select at least one person who wants to watch this show");
       helpText.textContent = "Please select at least one person who wants to watch this show";

@@ -57,10 +57,16 @@
       <small id="watchersHelp">Select at least one person who wants to watch this show</small>
    </fieldset>
 
+   <input type="hidden" name="referer" value="{{.Referer }}">
+
    <fieldset class="grid">
       <input type="submit" id="submit" value="Update Show" />
       <button type="button" id="btnCancel" class="secondary">Cancel</button>
    </fieldset>
 </form>
+
+<p>
+   <small><em>Search results provided by <a href="https://www.tvmaze.com/" _target="_blank">TV Maze API</a></em></small>
+</p>
 
 {{end}}
