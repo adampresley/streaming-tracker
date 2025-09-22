@@ -44,7 +44,8 @@
 
             {{if eq .WatchStatus "Watching"}}
             <button hx-post="/shows/finish-season?id={{.ShowID}}" hx-target="#dashboard-shows" hx-swap="innerHTML"
-               class="tertiary">
+               class="tertiary" {{if eq .CurrentSeason .NumSeasons}} data-umami-event="Finish Show"
+               data-umami-event-show-name="{{.ShowName}}" {{end}}>
                {{if eq .CurrentSeason .NumSeasons}}
                Finish Show
                {{else}}
