@@ -1,0 +1,19 @@
+[tools]
+air = "1.63.0"
+go = "1.25.1"
+postgres = "17.5"
+process-compose = "1.75.2"
+
+[env]
+PGDATA = ".pg/data"
+PGHOST = "localhost"
+DATABASE_URI = "postgres://streamingtracker:password@localhost:5432/streamingtracker?sslmode=disable"
+POSTGRES_DB = "streamingtracker"
+POSTGRES_PASSWORD = "password"
+POSTGRES_USER = "streamingtracker"
+
+[tasks.run]
+description = "Run the streaming tracker application"
+run = [
+   "process-compose -f process-compose.yaml up",
+]

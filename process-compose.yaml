@@ -1,0 +1,62 @@
+version: "0.5"
+
+processes:
+  streaming-tracker:
+    command: air
+    namespace: http:8081
+    working_dir: ./cmd/streaming-tracker
+    depends_on:
+      postgres:
+        condition: process_healthy
+    readiness_probe:
+      http_get:
+        host: localhost
+        port: 8081
+        scheme: http
+        path: /heartbeat
+    liveness_probe:
+      http_get:
+        host: localhost
+        port: 8081
+        scheme: http
+        path: /heartbeat
+
+  init-db:
+    command: |
+      if [ -f "$PGDATA/PG_VERSION" ]; then
+        echo "Database already initialized."
+        exit 0
+      fi
+
+      echo "Initializing database..."
+      initdb -D "$PGDATA" -U postgres
+
+      echo "Starting temporary postgres for user/db creation..."
+      pg_ctl -D "$PGDATA" -w start
+
+      psql -U postgres -d postgres -c "ALTER ROLE postgres WITH PASSWORD 'postgres';"
+      psql -U postgres -c "CREATE USER streamingtracker WITH PASSWORD 'password';"
+      psql -U postgres -c "CREATE DATABASE streamingtracker OWNER streamingtracker;"
+
+      echo "Stopping temporary postgres..."
+      pg_ctl stop
+    availability:
+      restart: "no"
+
+  postgres:
+    command: 'pg_ctl start -o "-c listen_addresses=localhost -p 5432" -w'
+    is_daemon: true
+    environment:
+      - POSTGRES_DB=streamingtracker
+      - POSTGRES_USER=streamingtracker
+      - POSTGRES_PASSWORD=password
+    depends_on:
+      init-db:
+        condition: process_completed_successfully
+    shutdown:
+      command: "pg_ctl stop -m fast"
+    availability:
+      restart: "always"
+    readiness_probe:
+      exec:
+        command: "pg_isready -h localhost -p 5432 -d streamingtracker"

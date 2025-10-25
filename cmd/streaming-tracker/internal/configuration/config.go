@@ -14,7 +14,7 @@ type Config struct {
 	EmailFrom          string        `flag:"emailfrom" env:"EMAIL_FROM" default:"noreply@example.com" description:"The email address to use for sending emails"`
 	EmailHost          string        `flag:"emailhost" env:"EMAIL_HOST" default:"localhost" description:"The SMTP host for sending emails"`
 	EmailPort          int           `flag:"emailport" env:"EMAIL_PORT" default:"2500" description:"The SMTP port for sending emails"`
-	Host               string        `flag:"host" env:"HOST" default:"localhost:8080" description:"The address and port to bind the HTTP server to"`
+	Host               string        `flag:"host" env:"HOST" default:"localhost:8081" description:"The address and port to bind the HTTP server to"`
 	LogLevel           string        `flag:"loglevel" env:"LOG_LEVEL" default:"debug" description:"The log level to use. Valid values are 'debug', 'info', 'warn', and 'error'"`
 	PageSize           int           `flag:"pagesize" env:"PAGE_SIZE" default:"20" description:"The number of items to display per page"`
 	QueryTimeout       time.Duration `flag:"querytimeout" env:"QUERY_TIMEOUT" default:"10s" description:"The maximum time to wait for a query to complete"`
