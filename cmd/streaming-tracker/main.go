@@ -4,10 +4,10 @@ import (
 	"context"
 	"embed"
 	"encoding/gob"
+	"io/fs"
 	"log/slog"
 	"net/http"
 	"os"
-	"path/filepath"
 	"strings"
 	"time"
 
@@ -40,6 +40,9 @@ var (
 
 	//go:embed app
 	appFS embed.FS
+
+	//go:embed sql-migrations
+	sqlMigrationsFS embed.FS
 
 	/* Services */
 	db              *pgxpool.Pool
@@ -287,7 +290,7 @@ func migrateDatabase(config *configuration.Config) {
 		b    []byte
 	)
 
-	if dirs, err = os.ReadDir(config.DataMigrationDir); err != nil {
+	if dirs, err = fs.ReadDir(sqlMigrationsFS, "."); err != nil {
 		panic(err)
 	}
 
@@ -297,7 +300,7 @@ func migrateDatabase(config *configuration.Config) {
 		}
 
 		if strings.HasPrefix(d.Name(), "commit") {
-			if b, err = os.ReadFile(filepath.Join(config.DataMigrationDir, d.Name())); err != nil {
+			if b, err = fs.ReadFile(sqlMigrationsFS, d.Name()); err != nil {
 				panic(err)
 			}
 
