@@ -328,6 +328,7 @@ func (c IdentityController) LoginAction(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	slog.Info("user logged in", "userID", user.ID.ID, "accountID", user.Account.ID.ID)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 

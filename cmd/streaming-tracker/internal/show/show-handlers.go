@@ -214,6 +214,7 @@ func (c ShowController) AddShowAction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	slog.Info("new show added successfully", "showName", viewData.ShowName, "accountID", session.AccountID)
 	http.Redirect(w, r, "/?message=New show added successfully! <a href=\"/shows/add\">Add another show</a>", http.StatusSeeOther)
 }
 
@@ -256,6 +257,7 @@ func (c ShowController) AddSeasonAction(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	slog.Info("show season added successfully", "showID", showID, "accountID", session.AccountID)
 	c.renderer.Render("pages/shows/manage-shows", viewData, w)
 }
 
@@ -333,7 +335,6 @@ func (c ShowController) EditShowPage(w http.ResponseWriter, r *http.Request) {
 		Referer:        httphelpers.GetFromRequest[string](r, "referer"),
 	}
 
-	fmt.Printf("referer: %s\n", viewData.Referer)
 	if viewData.Platforms, err = c.platformService.GetPlatforms(); err != nil {
 		slog.Error("error fetching platforms", "error", err)
 		viewData.Message = "There was an unexpected error trying to load this page. Please try again later."
@@ -729,6 +730,7 @@ func (c ShowController) OnlineSearchAction(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
+	slog.Info("show search performed", "searchTerm", searchTerm, "resultsCount", len(results))
 	httphelpers.WriteJson(w, http.StatusOK, results)
 }
 
@@ -758,6 +760,7 @@ func (c ShowController) FindShowImageAction(w http.ResponseWriter, r *http.Reque
 		"imageURL": imageURL,
 	}
 
+	slog.Info("found show image", "showName", showName, "imageURL", imageURL)
 	httphelpers.WriteJson(w, http.StatusOK, response)
 }
 
