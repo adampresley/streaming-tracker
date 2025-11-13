@@ -624,6 +624,7 @@ func (c ShowController) StartWatchingAction(w http.ResponseWriter, r *http.Reque
 		Shows: viewmodels.NewDashboardShowsFromDbModel(showsData),
 	}
 
+	slog.Info("start watching show", "showID", showID, "accountID", session.AccountID)
 	c.renderer.Render("components/dashboard-shows", viewData, w)
 }
 
@@ -665,6 +666,7 @@ func (c ShowController) BackToWantToWatchAction(w http.ResponseWriter, r *http.R
 		Shows: viewmodels.NewDashboardShowsFromDbModel(showsData),
 	}
 
+	slog.Info("move show back to want to watch", "showID", showID, "accountID", session.AccountID)
 	c.renderer.Render("components/dashboard-shows", viewData, w)
 }
 
@@ -706,6 +708,7 @@ func (c ShowController) FinishSeasonAction(w http.ResponseWriter, r *http.Reques
 		Shows: viewmodels.NewDashboardShowsFromDbModel(showsData),
 	}
 
+	slog.Info("season finished for show", "showID", showID, "accountID", session.AccountID)
 	c.renderer.Render("components/dashboard-shows", viewData, w)
 }
 
