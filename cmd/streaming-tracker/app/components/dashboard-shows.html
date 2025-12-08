@@ -38,7 +38,11 @@
          <footer>
             {{if eq .WatchStatus "Want To Watch"}}
             <button hx-post="/shows/start-watching?id={{.ShowID}}" hx-target="#dashboard-shows" hx-swap="innerHTML">
+               {{if eq .CurrentSeason 0}}
                Start Watching
+               {{else}}
+               Continue Watching
+               {{end}}
             </button>
             {{end}}
 

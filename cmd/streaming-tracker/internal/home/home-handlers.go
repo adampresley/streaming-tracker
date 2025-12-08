@@ -70,6 +70,11 @@ func (c HomeController) HomePage(w http.ResponseWriter, r *http.Request) {
 		shows *orderedmap.OrderedMap[string, *orderedmap.OrderedMap[string, []models.ShowGroupedByStatusAndWatchers]]
 	)
 
+	if r.URL.Path != "/" {
+		httphelpers.WriteText(w, http.StatusNotFound, "Not Found")
+		return
+	}
+
 	pageName := "pages/home"
 	session := c.GetSession(r)
 

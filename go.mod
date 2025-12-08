@@ -3,8 +3,8 @@ module github.com/adampresley/streaming-tracker
 go 1.25.1
 
 require (
-	github.com/adampresley/adamgokit v1.17.2
-	github.com/adampresley/configinator v1.1.0
+	github.com/adampresley/adamgokit v1.20.0
+	github.com/adampresley/configinator v1.2.0
 	github.com/alitto/pond/v2 v2.5.0
 	github.com/georgysavva/scany/v2 v2.1.4
 	github.com/jackc/pgx/v5 v5.7.5
@@ -46,6 +46,7 @@ require (
 	github.com/oapi-codegen/runtime v1.1.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/resend/resend-go/v2 v2.28.0 // indirect
 	github.com/rs/cors v1.11.1 // indirect
 	github.com/sendgrid/rest v2.6.9+incompatible // indirect
 	github.com/sendgrid/sendgrid-go v3.16.0+incompatible // indirect

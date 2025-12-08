@@ -14,7 +14,7 @@ import (
 	"github.com/adampresley/adamgokit/auth2"
 	"github.com/adampresley/adamgokit/email"
 	"github.com/adampresley/adamgokit/httphelpers"
-	"github.com/adampresley/adamgokit/mux"
+	"github.com/adampresley/adamgokit/mux2"
 	"github.com/adampresley/adamgokit/rendering"
 	"github.com/adampresley/adamgokit/rest/clientoptions"
 	"github.com/adampresley/adamgokit/sessions"
@@ -70,6 +70,8 @@ func main() {
 	config := configuration.LoadConfig()
 	setupLogger(&config, Version)
 
+	shutdownCtx, stopApp := context.WithCancel(context.Background())
+
 	slog.Info("configuration loaded",
 		slog.String("app", appName),
 		slog.String("version", Version),
@@ -89,7 +91,7 @@ func main() {
 		panic(err)
 	}
 
-	migrateDatabase(&config)
+	migrateDatabase()
 
 	/*
 	 * Setup services
@@ -115,6 +117,9 @@ func main() {
 				"/account/sign-up",
 				"/account/sign-up-success",
 				"/account/verify",
+				"/favicon.ico",
+				"/app.webmanifest",
+				"/heartbeat",
 			}),
 			auth2.WithRedirectURL("/login"),
 			auth2.WithErrorFunc(func(w http.ResponseWriter, r *http.Request, err error) {
@@ -123,14 +128,7 @@ func main() {
 		),
 	)
 
-	renderer, err = rendering.NewGoTemplateRenderer(rendering.GoTemplateRendererConfig{
-		PagesDir:          "pages",
-		TemplateDir:       "app",
-		TemplateExtension: ".html",
-		TemplateFS:        appFS,
-	})
-
-	if err != nil {
+	if renderer, err = rendering.NewGoTemplateRenderer(appFS); err != nil {
 		panic(err)
 	}
 
@@ -225,7 +223,7 @@ func main() {
 	 */
 	slog.Debug("setting up routes...")
 
-	routes := []mux.Route{
+	routes := []mux2.Route{
 		{Path: "GET /heartbeat", HandlerFunc: heartbeat},
 		{Path: "GET /", HandlerFunc: homeController.HomePage},
 		{Path: "GET /error", HandlerFunc: homeController.ErrorPage},
@@ -255,27 +253,21 @@ func main() {
 		{Path: "POST /shows/back-to-want-to-watch", HandlerFunc: showController.BackToWantToWatchAction},
 	}
 
-	routerConfig := mux.RouterConfig{
-		Address:              config.Host,
-		Debug:                Version == "development",
-		ServeStaticContent:   true,
-		StaticContentRootDir: "app",
-		StaticContentPrefix:  "/static/",
-		StaticFS:             appFS,
-		Middlewares:          []mux.MiddlewareFunc{auth.Middleware, mux.GzipMiddleware},
-		UseGzipForStaticFS:   true,
-	}
+	mux := mux2.Setup(
+		config,
+		routes,
+		shutdownCtx,
+		stopApp,
 
-	m := mux.SetupRouter(routerConfig, routes)
-	httpServer, quit := mux.SetupServer(routerConfig, m)
+		mux2.WithDebug(Version == "development"),
+		mux2.WithStaticContent("app", "/static/", appFS),
+		mux2.UseGzip(),
+		mux2.UseGzipForStaticFiles(),
+		mux2.WithMiddlewares(auth.Middleware),
+	)
 
-	/*
-	 * Wait for graceful shutdown
-	 */
 	slog.Info("server started")
-
-	<-quit
-	mux.Shutdown(httpServer)
+	mux.Start()
 	slog.Info("server stopped")
 }
 
@@ -283,7 +275,7 @@ func heartbeat(w http.ResponseWriter, r *http.Request) {
 	httphelpers.TextOK(w, "OK")
 }
 
-func migrateDatabase(config *configuration.Config) {
+func migrateDatabase() {
 	var (
 		err  error
 		dirs []os.DirEntry
