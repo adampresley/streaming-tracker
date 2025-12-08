@@ -1,14 +1,14 @@
 :root {
-   --error-background-color: var(--pico-form-element-invalid-focus-color);
+   --error-background-color: var(--form-element-invalid-focus-color);
    --error-text-color: white;
-   --success-background-color: var(--pico-form-element-valid-focus-color);
+   --success-background-color: var(--form-element-valid-focus-color);
    --success-text-color: white;
-   --pico-form-element-spacing-vertical: 0.45rem;
-   --pico-form-element-spacing-horizontal: 0.35rem;
+   --form-element-spacing-vertical: 0.45rem;
+   --form-element-spacing-horizontal: 0.35rem;
    --tertiary-background: rgb(216, 208, 241);
-   --search-results-border: var(--pico-muted-border-color);
-   --search-result-hover: var(--pico-secondary-background);
-   --search-result-selected: var(--pico-primary-background);
+   --search-results-border: var(--muted-border-color);
+   --search-result-hover: var(--secondary-background);
+   --search-result-selected: var(--primary-background);
 }
 
 /* My overrides */
@@ -56,8 +56,8 @@ body {
                transition: background-color 0.2s ease;
 
                &:hover {
-                  color: var(--pico-contrast);
-                  background-color: var(--pico-secondary-background);
+                  color: var(--contrast);
+                  background-color: var(--secondary-background);
                }
             }
          }
@@ -80,7 +80,7 @@ body {
                display: block;
                height: 3px;
                width: 100%;
-               background-color: var(--pico-contrast);
+               background-color: var(--contrast);
                border-radius: 2px;
                transition: all 0.3s ease;
             }
@@ -109,7 +109,7 @@ a {
 
 :is(button, [type=submit], [type=button], [role=button]).tertiary {
    background-color: var(--tertiary-background);
-   color: var(--pico-contrast-inverse);
+   color: var(--contrast-inverse);
    border-color: var(--tertiary-background);
 }
 
@@ -172,13 +172,13 @@ article {
             .poster-placeholder {
                width: 60px;
                height: 90px;
-               background: var(--pico-muted-border-color);
+               background: var(--muted-border-color);
                border-radius: 4px;
                display: flex;
                align-items: center;
                justify-content: center;
                font-size: 0.7rem;
-               color: var(--pico-muted-color);
+               color: var(--muted-color);
                text-align: center;
                line-height: 1.2;
             }
@@ -206,8 +206,8 @@ article {
                margin: 0;
 
                summary {
-                  padding-left: var(--pico-block-spacing-horizontal);
-                  padding-right: var(--pico-block-spacing-horizontal);
+                  padding-left: var(--block-spacing-horizontal);
+                  padding-right: var(--block-spacing-horizontal);
                }
             }
          }
@@ -233,9 +233,9 @@ table {
 .call-to-action {
    margin-bottom: 2rem;
    padding: 2rem;
-   border: 1px solid var(--pico-accordion-border-color);
+   border: 1px solid var(--accordion-border-color);
    border-radius: 10px;
-   background-color: var(--pico-card-background-color);
+   background-color: var(--card-background-color);
 
    img {
       max-height: 5rem;
@@ -258,7 +258,7 @@ table {
                right: -100%;
                width: 70%;
                height: 100vh;
-               background-color: var(--pico-background-color);
+               background-color: var(--background-color);
                flex-direction: column;
                justify-content: flex-start;
                align-items: stretch;
@@ -279,10 +279,10 @@ table {
                   display: block;
                   padding: 1rem;
                   text-align: center;
-                  border-bottom: 1px solid var(--pico-border-color);
+                  border-bottom: 1px solid var(--border-color);
 
                   &:hover {
-                     background-color: var(--pico-secondary-background);
+                     background-color: var(--secondary-background);
                   }
                }
             }
@@ -354,9 +354,9 @@ table {
    position: relative;
    margin-top: -2rem;
    border: 1px solid var(--search-results-border);
-   border-radius: var(--pico-border-radius);
-   background: var(--pico-card-background-color);
-   box-shadow: var(--pico-box-shadow);
+   border-radius: var(--border-radius);
+   background: var(--card-background-color);
+   box-shadow: var(--box-shadow);
    z-index: 1000;
 
    .search-results-header {
@@ -365,20 +365,20 @@ table {
       align-items: center;
       padding: 0.75rem 1rem;
       border-bottom: 1px solid var(--search-results-border);
-      background: var(--pico-secondary-background);
+      background: var(--secondary-background);
 
       .clear-search {
          background: none;
          border: none;
          font-size: 1.25rem;
          cursor: pointer;
-         color: var(--pico-muted-color);
+         color: var(--muted-color);
          padding: 0;
          margin: 0;
          line-height: 1;
 
          &:hover {
-            color: var(--pico-color);
+            color: var(--color);
          }
       }
    }
@@ -407,14 +407,14 @@ table {
 
          &.selected {
             background: var(--search-result-selected);
-            color: var(--pico-primary-inverse);
+            color: var(--primary-inverse);
          }
 
          .search-result-image {
             width: 40px;
             height: 60px;
             object-fit: cover;
-            border-radius: var(--pico-border-radius);
+            border-radius: var(--border-radius);
             flex-shrink: 0;
          }
 
@@ -433,14 +433,14 @@ table {
 
          .search-result-platforms {
             font-size: 0.875rem;
-            color: var(--pico-muted-color);
+            color: var(--muted-color);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
          }
 
          &.selected .search-result-platforms {
-            color: var(--pico-primary-inverse);
+            color: var(--primary-inverse);
             opacity: 0.8;
          }
       }
@@ -449,19 +449,19 @@ table {
       .search-error {
          padding: 1rem;
          text-align: center;
-         color: var(--pico-muted-color);
+         color: var(--muted-color);
          font-style: italic;
       }
 
       .search-error {
-         color: var(--pico-del-color);
+         color: var(--del-color);
       }
    }
 
    .search-loading {
       padding: 1rem;
       text-align: center;
-      color: var(--pico-muted-color);
+      color: var(--muted-color);
    }
 }
 
