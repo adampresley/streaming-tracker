@@ -41,7 +41,7 @@ var (
 	//go:embed app
 	appFS embed.FS
 
-	//go:embed sql-migrations
+	//go:embed sql-migrations/*.sql
 	sqlMigrationsFS embed.FS
 
 	/* Services */
@@ -288,15 +288,18 @@ func migrateDatabase() {
 
 	for _, d := range dirs {
 		if d.IsDir() {
+			slog.Debug("skipping directory", "name", d.Name())
 			continue
 		}
+
+		slog.Debug("checking for SQL script", "name", d.Name())
 
 		if strings.HasPrefix(d.Name(), "commit") {
 			if b, err = fs.ReadFile(sqlMigrationsFS, d.Name()); err != nil {
 				panic(err)
 			}
 
-			if err = runSqlScript(b); err != nil {
+			if err = runSqlScript(d.Name(), b); err != nil {
 				if !isIgnorableError(err) {
 					panic(err)
 				}
@@ -305,7 +308,9 @@ func migrateDatabase() {
 	}
 }
 
-func runSqlScript(script []byte) error {
+func runSqlScript(name string, script []byte) error {
+	slog.Info("running SQL script", "name", name)
+
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
 	defer cancel()
 

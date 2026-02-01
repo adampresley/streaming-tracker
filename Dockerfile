@@ -27,6 +27,7 @@ WORKDIR /dist
 
 # Copy the build artifacts from the previous stage
 COPY --from=builder /build/cmd/streaming-tracker/streaming-tracker .
+COPY --from=builder /build/cmd/streaming-tracker/sql-migrations ./sql-migrations
 
 # Run the executable
 ENTRYPOINT ["./streaming-tracker"]
