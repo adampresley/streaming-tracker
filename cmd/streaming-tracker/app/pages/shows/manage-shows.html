@@ -117,7 +117,7 @@
       <div>
          {{if .Paging.HasPrevious}}
          <a href="#" role="button" class="secondary" hx-get="/shows/manage" hx-target="#searchResults"
-            hx-swap="innerHTML" hx-include="#searchForm" hx-vals='{"page": {{.Paging.PreviousPage}}}'
+            hx-swap="innerHTML show:top" hx-include="#searchForm" hx-vals='{"page": {{.Paging.PreviousPage}}}'
             hx-push-url="true">
             Previous
          </a>
@@ -127,7 +127,8 @@
 
          {{if .Paging.HasNext}}
          <a href="#" role="button" class="secondary" hx-get="/shows/manage" hx-target="#searchResults"
-            hx-swap="innerHTML" hx-include="#searchForm" hx-vals='{"page": {{.Paging.NextPage}}}' hx-push-url="true">
+            hx-swap="innerHTML show:top" hx-include="#searchForm" hx-vals='{"page": {{.Paging.NextPage}}}'
+            hx-push-url="true">
             Next
          </a>
          {{else}}
