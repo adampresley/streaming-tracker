@@ -247,6 +247,7 @@ func (c ShowController) AddSeasonAction(w http.ResponseWriter, r *http.Request) 
 		httphelpers.GetFromRequest[int](r, "page"),
 		httphelpers.GetFromRequest[string](r, "showName"),
 		httphelpers.GetFromRequest[int](r, "platform"),
+		httphelpers.GetFromRequest[int](r, "watcher"),
 		viewmodels.BaseViewModel{IsHtmx: true},
 		r,
 	)
@@ -290,6 +291,7 @@ func (c ShowController) CancelShowAction(w http.ResponseWriter, r *http.Request)
 		httphelpers.GetFromRequest[int](r, "page"),
 		httphelpers.GetFromRequest[string](r, "showName"),
 		httphelpers.GetFromRequest[int](r, "platform"),
+		httphelpers.GetFromRequest[int](r, "watcher"),
 		viewmodels.BaseViewModel{IsHtmx: true},
 		r,
 	)
@@ -527,6 +529,7 @@ func (c ShowController) ManageShowsPage(w http.ResponseWriter, r *http.Request) 
 		httphelpers.GetFromRequest[int](r, "page"),
 		httphelpers.GetFromRequest[string](r, "showName"),
 		httphelpers.GetFromRequest[int](r, "platform"),
+		httphelpers.GetFromRequest[int](r, "watcher"),
 		baseViewModel,
 		r,
 	)
@@ -538,10 +541,22 @@ func (c ShowController) ManageShowsPage(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	// Set platforms for non-HTMX requests
+	/*
+	 * Set search/filter data for non-HTMX requests. This happens
+	 * on first page load.
+	 */
 	if !httphelpers.IsHtmx(r) {
 		if viewData.Platforms, err = c.platformService.GetPlatforms(); err != nil {
 			slog.Error("error fetching platforms", "error", err)
+			viewData.Message = "There was an unexpected error trying to load this page. Please try again later."
+			viewData.IsError = true
+
+			c.renderer.Render(pageName, viewData, w)
+			return
+		}
+
+		if viewData.Watchers, err = c.watcherService.GetWatchers(session.AccountID); err != nil {
+			slog.Error("error fetching watchers", "error", err)
 			viewData.Message = "There was an unexpected error trying to load this page. Please try again later."
 			viewData.IsError = true
 
@@ -770,7 +785,7 @@ func (c ShowController) FindShowImageAction(w http.ResponseWriter, r *http.Reque
 /*
 Helper method to search shows and assemble ManageShows view data
 */
-func (c ShowController) searchShowsAndAssembleViewData(accountID, page int, showName string, platform int, baseViewModel viewmodels.BaseViewModel, r *http.Request) (viewmodels.ManageShows, error) {
+func (c ShowController) searchShowsAndAssembleViewData(accountID, page int, showName string, platform, watcher int, baseViewModel viewmodels.BaseViewModel, r *http.Request) (viewmodels.ManageShows, error) {
 	var (
 		err          error
 		totalRecords int
@@ -782,6 +797,7 @@ func (c ShowController) searchShowsAndAssembleViewData(accountID, page int, show
 		Page:          page,
 		ShowName:      showName,
 		Platform:      platform,
+		Watcher:       watcher,
 		Shows:         []viewmodels.Show{},
 		Referer:       httphelpers.QueryParamsToString(r),
 	}
@@ -792,6 +808,7 @@ func (c ShowController) searchShowsAndAssembleViewData(accountID, page int, show
 		shows.WithPage(viewData.Page),
 		shows.WithShowName(viewData.ShowName),
 		shows.WithPlatform(viewData.Platform),
+		shows.WithWatcher(viewData.Watcher),
 	)
 
 	if err != nil {

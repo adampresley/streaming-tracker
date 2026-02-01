@@ -794,6 +794,7 @@ func (s ShowService) SearchShows(accountID int, options ...SearchShowsOption) ([
 		Page:     1,
 		ShowName: "",
 		Platform: 0,
+		Watcher:  0,
 	}
 
 	for _, opt := range options {
@@ -847,6 +848,12 @@ WITH matches AS (
 		parameterIndex++
 		query += fmt.Sprintf(` AND p.id = $%d `, parameterIndex)
 		args = append(args, opts.Platform)
+	}
+
+	if opts.Watcher != 0 {
+		parameterIndex++
+		query += fmt.Sprintf(` AND wtss.watcher_id = $%d `, parameterIndex)
+		args = append(args, opts.Watcher)
 	}
 
 	query += `

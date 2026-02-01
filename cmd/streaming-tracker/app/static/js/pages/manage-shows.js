@@ -1,9 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
-   // Reset button functionality
    document.querySelector("#btnReset").addEventListener("click", () => {
       document.querySelector("#searchForm").reset();
       document.querySelector("#showName").value = "";
       document.querySelector("#platform").selectedIndex = 0;
+      document.querySelector("#watcher").selectedIndex = 0;
    });
 
    // Modal configuration 
@@ -18,18 +18,22 @@ document.addEventListener("DOMContentLoaded", () => {
    const openModal = (modal) => {
       const { documentElement: html } = document;
       html.classList.add(isOpenClass, openingClass);
+
       setTimeout(() => {
          visibleModal = modal;
          html.classList.remove(openingClass);
       }, animationDuration);
+
       modal.showModal();
    };
 
    const closeModal = (modal) => {
       visibleModal = null;
       pendingAction = null;
+
       const { documentElement: html } = document;
       html.classList.add(closingClass);
+
       setTimeout(() => {
          html.classList.remove(closingClass, isOpenClass);
          modal.close();

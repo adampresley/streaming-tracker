@@ -37,10 +37,12 @@ type ManageShows struct {
 	BaseViewModel
 
 	Platforms []*models.Platform
+	Watchers  []*models.Watcher
 
 	Page     int
 	ShowName string
 	Platform int
+	Watcher  int
 	Shows    []Show
 	Paging   paging.Paging
 	Referer  string

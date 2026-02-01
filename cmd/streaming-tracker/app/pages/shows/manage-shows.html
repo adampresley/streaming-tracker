@@ -29,15 +29,23 @@
 
 {{if not .IsHtmx}}
 <form id="searchForm" hx-get="/shows/manage" hx-target="#searchResults" hx-swap="innerHTML"
-   hx-trigger="input delay:500ms from:#showName, change from:#platform, click[event.target.matches('#btnReset')]"
+   hx-trigger="input delay:500ms from:#showName, change from:#platform, change from:#watcher, click[event.target.matches('#btnReset')]"
    hx-push-url="true">
    <fieldset class="grid">
       <input type="text" id="showName" name="showName" placeholder="Search for a show..." aria-label="Show"
          value="{{.ShowName}}" />
+
       <select id="platform" name="platform" aria-label="Platform">
          <option value="0">Filter by platform</option>
          {{range .Platforms}}
          <option value="{{.ID.ID}}" {{if eq $.Platform .ID.ID}} selected="selected" {{end}}>{{.Name }}</option>
+         {{end}}
+      </select>
+
+      <select id="watcher" name="watcher" aria-label="Watcher">
+         <option value="0">Filter by watcher(s)</option>
+         {{range .Watchers}}
+         <option value="{{.ID.ID}}" {{if eq $.Watcher .ID.ID}} selected="selected" {{end}}>{{.Name }}</option>
          {{end}}
       </select>
 
