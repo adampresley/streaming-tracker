@@ -790,11 +790,19 @@ func (s ShowService) SearchShows(accountID int, options ...SearchShowsOption) ([
 		result = []querymodels.Shows{}
 	)
 
+	sortableColumns := map[string]string{
+		"show":     "s.name",
+		"platform": "p.name",
+		"finished": "ss.finished_at",
+	}
+
 	opts := &SearchShowsOptions{
-		Page:     1,
-		ShowName: "",
-		Platform: 0,
-		Watcher:  0,
+		Page:          1,
+		ShowName:      "",
+		Platform:      0,
+		Watcher:       0,
+		SortBy:        "show",
+		SortDirection: "ASC",
 	}
 
 	for _, opt := range options {
@@ -860,8 +868,20 @@ WITH matches AS (
 	GROUP BY 
 		s.id, p.name, p.icon, ws.status, ss.current_season,
 		ss.finished_at, ss.watch_status_id, s.poster_image
-	ORDER BY 
-		s.name ASC
+`
+	orderByClause := "ORDER BY s.name ASC" // Default sort
+
+	if sortColumn, ok := sortableColumns[opts.SortBy]; ok {
+		direction := "ASC"
+		if strings.ToUpper(opts.SortDirection) == "DESC" {
+			direction = "DESC"
+		}
+		orderByClause = fmt.Sprintf("ORDER BY %s %s", sortColumn, direction)
+	}
+
+	query += orderByClause
+
+	query += `
 )
 SELECT
 	*

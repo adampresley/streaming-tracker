@@ -51,6 +51,8 @@
 
       <button id="btnReset" type="button" class="secondary">Reset</button>
       <input type="hidden" id="page" name="page" value="{{.Page}}" />
+      <input type="hidden" id="sortBy" name="sortBy" value="{{.SortBy}}" />
+      <input type="hidden" id="sortDirection" name="sortDirection" value="{{.SortDirection}}" />
    </fieldset>
 </form>
 
@@ -60,11 +62,38 @@
    <table>
       <thead>
          <tr>
-            <th scope="col">Show</th>
-            <th scope="col">Platform</th>
+            <th scope="col">
+               <a href="#" hx-get="/shows/manage" hx-target="#searchResults" hx-swap="innerHTML"
+                  hx-include="#searchForm"
+                  hx-vals='{"sortBy": "show", "sortDirection": "{{if and (eq .SortBy "show") (eq .SortDirection "ASC")}}DESC{{else}}ASC{{end}}"}'>
+                  Show
+                  {{if eq .SortBy "show"}}
+                  {{if eq .SortDirection "ASC"}}&#9650;{{else}}&#9660;{{end}}
+                  {{end}}
+               </a>
+            </th>
+            <th scope="col">
+               <a href="#" hx-get="/shows/manage" hx-target="#searchResults" hx-swap="innerHTML"
+                  hx-include="#searchForm"
+                  hx-vals='{"sortBy": "platform", "sortDirection": "{{if and (eq .SortBy "platform") (eq .SortDirection "ASC")}}DESC{{else}}ASC{{end}}"}'>
+                  Platform
+                  {{if eq .SortBy "platform"}}
+                  {{if eq .SortDirection "ASC"}}&#9650;{{else}}&#9660;{{end}}
+                  {{end}}
+               </a>
+            </th>
             <th scope="col">Seasons</th>
             <th scope="col">Watchers</th>
-            <th scope="col">Finished</th>
+            <th scope="col">
+               <a href="#" hx-get="/shows/manage" hx-target="#searchResults" hx-swap="innerHTML"
+                  hx-include="#searchForm"
+                  hx-vals='{"sortBy": "finished", "sortDirection": "{{if and (eq .SortBy "finished") (eq .SortDirection "ASC")}}DESC{{else}}ASC{{end}}"}'>
+                  Finished
+                  {{if eq .SortBy "finished"}}
+                  {{if eq .SortDirection "ASC"}}&#9650;{{else}}&#9660;{{end}}
+                  {{end}}
+               </a>
+            </th>
             <th scope="col" style="width: 190px">Actions</th>
          </tr>
       </thead>

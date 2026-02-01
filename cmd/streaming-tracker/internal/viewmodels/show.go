@@ -39,13 +39,15 @@ type ManageShows struct {
 	Platforms []*models.Platform
 	Watchers  []*models.Watcher
 
-	Page     int
-	ShowName string
-	Platform int
-	Watcher  int
-	Shows    []Show
-	Paging   paging.Paging
-	Referer  string
+	Page          int
+	ShowName      string
+	Platform      int
+	Watcher       int
+	SortBy        string
+	SortDirection string
+	Shows         []Show
+	Paging        paging.Paging
+	Referer       string
 }
 
 type Show struct {
